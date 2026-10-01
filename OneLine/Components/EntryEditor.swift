@@ -39,12 +39,14 @@ struct EntryEditor: View {
                     let limited = EntryText.limit(new)
                     if limited != new { draft = limited }
                 }
-            MoodPicker(selection: $mood)
+            // While typing, the picker lives in the keyboard toolbar; otherwise it shows here.
+            if !focused { MoodPicker(selection: $mood) }
             PrimaryButton(buttonTitle, action: confirm)
                 .disabled(!canSave)
         }
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
+                MoodPicker(selection: $mood, compact: true)
                 Spacer()
                 Button(action: confirm) { Image(systemName: "checkmark") }
                     .disabled(!canSave)
