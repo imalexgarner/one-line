@@ -11,10 +11,8 @@ struct MoodPicker: View {
 
     var body: some View {
         let size: CGFloat = compact ? 24 : 30
-        HStack(spacing: compact ? 0 : 14) {
+        HStack(spacing: compact ? 8 : 14) {
             ForEach(moods) { mood in
-                // Compact: spread the circles evenly across the full toolbar width.
-                if compact && mood != moods.first { Spacer(minLength: 0) }
                 let isSelected = selection == mood
                 Circle().fill(mood.color)
                     .frame(width: isSelected ? size + (compact ? 0 : 8) : size, height: isSelected ? size + (compact ? 0 : 8) : size)
