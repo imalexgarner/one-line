@@ -17,7 +17,7 @@ struct TodayView: View {
             VStack(alignment: .leading, spacing: 0) {
                 ScreenHeader(eyebrow: today.formatted(.dateTime.weekday(.wide).month(.wide).day()), title: headline)
                 VStack(alignment: .leading, spacing: 36) {
-                    HeroIllustration("oc-growing", height: keyboardUp ? 96 : 200,
+                    HeroIllustration("nc-improve-signup-experience", height: keyboardUp ? 96 : 200,
                                      alignment: keyboardUp ? .leading : .center)
                     if let todays, !isEditing {
                         Button { withAnimation(.smooth) { isEditing = true } } label: {
