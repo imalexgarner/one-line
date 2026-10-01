@@ -32,8 +32,8 @@ struct DaySheet: View {
     private var title: String {
         switch (EditWindow.isEditable(day), entry == nil) {
         case (true, true): "What was one thing?"
-        case (true, false): "Change your line."
-        case (false, false): "Kept."
+        case (true, false): "Change your line"
+        case (false, false): "Kept"
         case (false, true): "Not kept."
         }
     }

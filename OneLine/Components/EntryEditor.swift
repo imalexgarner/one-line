@@ -50,8 +50,16 @@ struct EntryEditor: View {
                 .disabled(!canSave)
         }
         .toolbar {
-            ToolbarItemGroup(placement: .keyboard) {
-                MoodPicker(selection: $mood, compact: true)
+            ToolbarItem(placement: .keyboard) {
+                // Full-width bar: colours leading, the chosen mood's name trailing.
+                HStack(spacing: 0) {
+                    MoodPicker(selection: $mood, compact: true)
+                    Spacer(minLength: 0)
+                    Text(mood.name)
+                        .font(Theme.caption).foregroundStyle(Theme.quiet)
+                        .padding(8)
+                }
+                .frame(maxWidth: .infinity)
             }
         }
         .task {

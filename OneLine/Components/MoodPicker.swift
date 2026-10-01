@@ -25,7 +25,6 @@ struct MoodPicker: View {
                     .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
             }
         }
-        .frame(maxWidth: compact ? .infinity : nil)
         // Even 8pt around the row inside the system toolbar (which itself can't be inset).
         .padding(compact ? 8 : 0)
         .sensoryFeedback(.selection, trigger: selection)

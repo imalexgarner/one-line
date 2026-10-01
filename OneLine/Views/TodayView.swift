@@ -53,7 +53,7 @@ struct TodayView: View {
 
     private var headline: String {
         if todays == nil { return "What's one thing from today?" }
-        return isEditing ? "Change your line." : "Kept."
+        return isEditing ? "Change your line" : "Kept"
     }
 
     private func save(_ text: String, _ mood: Mood) {
