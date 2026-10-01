@@ -43,9 +43,20 @@ struct EntryKeyboardBar: View {
             .disabled(!canSave)
         }
         .padding(8)
-        .background(.regularMaterial, in: Capsule())
+        .glassBackground()
         .padding(.horizontal, 12)
         .padding(.bottom, 8)
+    }
+}
+
+private extension View {
+    /// Liquid Glass on iOS 26+, a plain material on earlier systems (deployment target is 18).
+    @ViewBuilder func glassBackground() -> some View {
+        if #available(iOS 26, *) {
+            self.glassEffect(.regular, in: Capsule())
+        } else {
+            self.background(.regularMaterial, in: Capsule())
+        }
     }
 }
 
