@@ -27,4 +27,12 @@ enum Mood: Int, CaseIterable, Identifiable, Codable {
         case .stormy: Color(red: 0.36, green: 0.31, blue: 0.47)
         }
     }
+
+    /// Text colour that stays legible on top of `color`.
+    var onColor: Color {
+        switch self {
+        case .heavy, .stormy: .white
+        default: Color(red: 0.13, green: 0.12, blue: 0.11)
+        }
+    }
 }

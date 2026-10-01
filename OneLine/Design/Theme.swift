@@ -13,6 +13,10 @@ enum Theme {
     })
     static let quiet = ink.opacity(0.5)
 
+    /// Horizontal page margin shared by every screen.
+    static let margin: CGFloat = 28
+    static let title = line(30)
+
     static func line(_ size: CGFloat = 26) -> Font { .system(size: size, weight: .regular, design: .serif) }
     static let caption = Font.system(.footnote, design: .serif).italic()
 }

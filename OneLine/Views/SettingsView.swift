@@ -7,6 +7,7 @@ struct SettingsView: View {
     @Query private var entries: [Entry]
     @State private var denied = false
     @Environment(\.openURL) private var openURL
+    @Environment(\.modelContext) private var context
 
     private var reminderTime: Binding<Date> {
         Binding(
@@ -19,7 +20,8 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        VStack(spacing: 0) {
+            ScreenHeader(eyebrow: "Make it yours", title: "Settings")
             Form {
                 Section {
                     Toggle("Daily reminder", isOn: Binding(get: { enabled }, set: { on in Task { await setEnabled(on) } }))
@@ -39,15 +41,24 @@ struct SettingsView: View {
                 Section("Your journal") {
                     LabeledContent("Lines kept", value: "\(entries.count)")
                 }
+
+                #if DEBUG
+                Section {
+                    Button("Load sample data") { SampleData.populate(into: context) }
+                    Button("Delete all lines", role: .destructive) { SampleData.clear(context) }
+                } header: { Text("Developer") } footer: {
+                    Text("Debug builds only. Sample data fills about 14 months, leaving today blank.")
+                }
+                #endif
             }
             .font(.system(.body, design: .serif))
             .scrollContentBackground(.hidden)
-            .background(Theme.paper)
-            .navigationTitle("Settings")
-            .task { await syncPermission() }
-            .onChange(of: minutes) { _, new in
-                if enabled { Task { await Reminder.schedule(minutes: new) } }
-            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background { Theme.paper.ignoresSafeArea() }
+        .task { await syncPermission() }
+        .onChange(of: minutes) { _, new in
+            if enabled { Task { await Reminder.schedule(minutes: new) } }
         }
     }
 

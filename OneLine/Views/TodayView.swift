@@ -13,33 +13,34 @@ struct TodayView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 36) {
-                header
-                if let todays, !isEditing {
-                    written(todays)
-                } else {
-                    EntryEditor(
-                        text: todays?.text ?? "",
-                        mood: todays?.mood ?? .calm,
-                        buttonTitle: todays == nil ? "Keep it" : "Save"
-                    ) { text, mood in save(text, mood) }
+            VStack(alignment: .leading, spacing: 0) {
+                ScreenHeader(eyebrow: today.formatted(.dateTime.weekday(.wide).month(.wide).day()), title: headline)
+                VStack(alignment: .leading, spacing: 36) {
+                    Image("")
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 240)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .foregroundStyle(Theme.ink.opacity(0.85))
+                        .accessibilityHidden(true)
+                    if let todays, !isEditing {
+                        written(todays)
+                    } else {
+                        EntryEditor(
+                            text: todays?.text ?? "",
+                            mood: todays?.mood ?? .calm,
+                            buttonTitle: todays == nil ? "Keep it" : "Save"
+                        ) { text, mood in save(text, mood) }
+                    }
+                    if let memory, !isEditing { memoryCard(memory) }
                 }
-                if let memory, !isEditing { memoryCard(memory) }
+                .padding(.horizontal, Theme.margin)
+                .padding(.bottom, 24)
             }
-            .padding(.horizontal, 28)
-            .padding(.top, 24)
-            .padding(.bottom, 24)
         }
         .scrollDismissesKeyboard(.interactively)
         .background { Theme.paper.ignoresSafeArea() }
-    }
-
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(today.formatted(.dateTime.weekday(.wide).month(.wide).day()))
-                .font(Theme.caption).foregroundStyle(Theme.quiet)
-            Text(headline).font(Theme.line(30)).foregroundStyle(Theme.ink)
-        }
     }
 
     private var headline: String {
