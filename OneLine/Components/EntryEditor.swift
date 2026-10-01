@@ -35,7 +35,14 @@ struct EntryEditor: View {
                 .lineLimit(1...4)
                 .focused($focused)
                 .submitLabel(.done)
-                .onChange(of: draft) { _, new in
+                .onChange(of: draft) { old, new in
+                    // The keyboard's blue Done key arrives as a typed newline in a vertical field.
+                    // A single typed "\n" confirms; pasted multi-line text just gets flattened.
+                    if new.count == old.count + 1, new.contains("\n") {
+                        draft = EntryText.limit(new)
+                        confirm()
+                        return
+                    }
                     let limited = EntryText.limit(new)
                     if limited != new { draft = limited }
                 }
@@ -47,10 +54,6 @@ struct EntryEditor: View {
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 MoodPicker(selection: $mood, compact: true)
-                Spacer()
-                Button(action: confirm) { Image(systemName: "checkmark") }
-                    .disabled(!canSave)
-                    .accessibilityLabel(buttonTitle)
             }
         }
         .task {
