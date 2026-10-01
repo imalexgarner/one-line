@@ -36,7 +36,7 @@ struct EntryKeyboardBar: View {
             .accessibilityLabel("Mood, \(mood.name)")
             Spacer(minLength: 0)
             Button(action: onSave) {
-                Text(title).font(Theme.button).padding(.horizontal, 8).padding(.vertical, 4)
+                Text(title).font(.system(.body).weight(.semibold)).padding(.horizontal, 8).padding(.vertical, 4)
             }
             .buttonStyle(.borderedProminent).tint(Theme.ink)
             .foregroundStyle(Theme.paper)

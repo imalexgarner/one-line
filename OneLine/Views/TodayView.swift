@@ -10,6 +10,7 @@ struct TodayView: View {
     @State private var mood: Mood = .calm
     @State private var canSave = false
     @State private var saveRequest = 0
+    @Namespace private var barSpace
 
     private var today: Date { Calendar.current.startOfDay(for: .now) }
     private var todays: Entry? { entries.first { $0.day == today } }
@@ -23,14 +24,15 @@ struct TodayView: View {
                     HeroIllustration("nc-improve-signup-experience", height: keyboardUp ? 96 : 200,
                                      alignment: keyboardUp ? .leading : .center)
                     if let todays, !isEditing {
-                        Button { withAnimation(.smooth) { isEditing = true } } label: {
-                            EntryLine(text: todays.text, mood: todays.mood)
+                        Button { mood = todays.mood; withAnimation(.smooth) { isEditing = true } } label: {
+                            EntryLine(text: todays.text, mood: todays.mood, barNamespace: barSpace)
                         }
                         .buttonStyle(PressableButtonStyle(scale: 0.98))
                         .accessibilityHint("Double tap to edit")
                         .transition(.opacity.combined(with: .move(edge: .bottom)))
                     } else {
-                        EntryEditor(text: todays?.text ?? "", mood: $mood, saveRequest: saveRequest) { text, mood in
+                        EntryEditor(text: todays?.text ?? "", mood: $mood, saveRequest: saveRequest,
+                                    barNamespace: barSpace) { text, mood in
                             save(text, mood)
                         }
                     }

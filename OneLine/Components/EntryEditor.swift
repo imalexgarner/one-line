@@ -9,16 +9,18 @@ import SwiftUI
 struct EntryEditor: View {
     @Binding var mood: Mood
     var saveRequest = 0
+    var barNamespace: Namespace.ID?
     var onSave: (String, Mood) -> Void
 
     @State private var draft: String
     @FocusState private var focused: Bool
 
-    init(text: String = "", mood: Binding<Mood>, saveRequest: Int = 0,
+    init(text: String = "", mood: Binding<Mood>, saveRequest: Int = 0, barNamespace: Namespace.ID? = nil,
          onSave: @escaping (String, Mood) -> Void) {
         _draft = State(initialValue: text)
         _mood = mood
         self.saveRequest = saveRequest
+        self.barNamespace = barNamespace
         self.onSave = onSave
     }
 
@@ -31,7 +33,9 @@ struct EntryEditor: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        // Same layout as EntryLine: mood bar leading, the line beside it.
+        HStack(alignment: .top, spacing: 16) {
+            MoodBar(mood: mood, namespace: barNamespace)
             TextField("One line…", text: $draft, axis: .vertical)
                 .font(Theme.entry).foregroundStyle(Theme.ink)
                 .lineLimit(1...4)
@@ -49,6 +53,8 @@ struct EntryEditor: View {
                     if limited != new { draft = limited }
                 }
         }
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .onChange(of: saveRequest) { _, _ in confirm() }
         .preference(key: EntryCanSaveKey.self, value: canSave)
         .task {
