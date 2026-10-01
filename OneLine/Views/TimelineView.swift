@@ -31,6 +31,7 @@ struct TimelineView: View {
                     } header: {
                         Text(group.month.formatted(.dateTime.month(.wide).year()))
                             .font(Theme.sectionHeader)
+                            .fontDesign(.serif)   // List headers can drop the design from the font alone
                             .foregroundStyle(Theme.ink)
                             .textCase(nil)
                             .padding(.leading, Theme.margin - 16)
