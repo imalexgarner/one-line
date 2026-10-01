@@ -17,19 +17,18 @@ struct DaySheet: View {
     private var entry: Entry? { matches.first }
 
     var body: some View {
-        ZStack {
-            Theme.paper.ignoresSafeArea()
-            VStack(alignment: .leading, spacing: 28) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(day.formatted(.dateTime.weekday(.wide).month(.wide).day().year()))
-                        .font(Theme.caption).foregroundStyle(Theme.quiet)
-                    Text(title).font(Theme.line(26)).foregroundStyle(Theme.ink)
-                }
-                content
-                Spacer(minLength: 0)
+        VStack(alignment: .leading, spacing: 28) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(day.formatted(.dateTime.weekday(.wide).month(.wide).day().year()))
+                    .font(Theme.caption).foregroundStyle(Theme.quiet)
+                Text(title).font(Theme.line(26)).foregroundStyle(Theme.ink)
             }
-            .padding(28)
+            content
+            Spacer(minLength: 0)
         }
+        .padding(28)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background { Theme.paper.ignoresSafeArea() }
         .presentationDetents([.medium, .large])
     }
 

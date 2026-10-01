@@ -19,8 +19,7 @@ struct YearView: View {
     }
 
     var body: some View {
-        ZStack {
-            Theme.paper.ignoresSafeArea()
+        ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 HStack {
                     Text(String(year)).font(Theme.line(34)).foregroundStyle(Theme.ink)
@@ -41,10 +40,12 @@ struct YearView: View {
                 }
                 Text("\(entries.filter { cal.component(.year, from: $0.day) == year }.count) days kept")
                     .font(Theme.caption).foregroundStyle(Theme.quiet)
-                Spacer()
             }
-            .padding(28)
+            .padding(.horizontal, 28)
+            .padding(.top, 12)
+            .padding(.bottom, 24)
         }
+        .background { Theme.paper.ignoresSafeArea() }
         .sheet(item: $selected) { DaySheet(day: $0.date) }
     }
 

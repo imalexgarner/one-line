@@ -12,28 +12,26 @@ struct TodayView: View {
     private var memory: Resurfaced? { Resurfacing.pick(for: today, from: entries) }
 
     var body: some View {
-        ZStack {
-            Theme.paper.ignoresSafeArea()
-            ScrollView {
-                VStack(alignment: .leading, spacing: 36) {
-                    header
-                    if let todays, !isEditing {
-                        written(todays)
-                    } else {
-                        EntryEditor(
-                            text: todays?.text ?? "",
-                            mood: todays?.mood ?? .calm,
-                            buttonTitle: todays == nil ? "Keep it" : "Save"
-                        ) { text, mood in save(text, mood) }
-                    }
-                    if let memory, !isEditing { memoryCard(memory) }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 36) {
+                header
+                if let todays, !isEditing {
+                    written(todays)
+                } else {
+                    EntryEditor(
+                        text: todays?.text ?? "",
+                        mood: todays?.mood ?? .calm,
+                        buttonTitle: todays == nil ? "Keep it" : "Save"
+                    ) { text, mood in save(text, mood) }
                 }
-                .padding(.horizontal, 28)
-                .padding(.top, 24)
-                .padding(.bottom, 60)
+                if let memory, !isEditing { memoryCard(memory) }
             }
-            .scrollDismissesKeyboard(.interactively)
+            .padding(.horizontal, 28)
+            .padding(.top, 24)
+            .padding(.bottom, 24)
         }
+        .scrollDismissesKeyboard(.interactively)
+        .background { Theme.paper.ignoresSafeArea() }
     }
 
     private var header: some View {
