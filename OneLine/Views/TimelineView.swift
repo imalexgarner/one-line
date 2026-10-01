@@ -31,7 +31,7 @@ struct TimelineView: View {
                         .onDelete { offsets in offsets.map { group.entries[$0] }.forEach(context.delete) }
                     } header: {
                         Text(group.month.formatted(.dateTime.month(.wide).year()))
-                            .font(.system(.subheadline, design: .serif).weight(.semibold))
+                            .font(Theme.sectionHeader)
                             .foregroundStyle(Theme.ink)
                             .textCase(nil)
                             .padding(.leading, Theme.margin - 16)
@@ -39,8 +39,11 @@ struct TimelineView: View {
                 }
             }
             .listStyle(.plain)
+            .listSectionSpacing(.compact)
+            .environment(\.defaultMinListHeaderHeight, 0)
+            .contentMargins(.top, 0, for: .scrollContent)
             .scrollContentBackground(.hidden)
-            .overlay { if entries.isEmpty { EmptyState("Nothing kept yet.") } }
+            .overlay { if entries.isEmpty { EmptyState("Nothing kept yet", message: "Your lines will gather here, month by month.") } }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background { Theme.paper.ignoresSafeArea() }

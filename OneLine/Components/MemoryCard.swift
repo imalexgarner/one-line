@@ -11,9 +11,9 @@ struct MemoryCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(label.uppercased())
-                .font(.system(.caption2, design: .serif).weight(.semibold)).tracking(1.5)
+                .font(Theme.label).tracking(1.5)
                 .foregroundStyle(Theme.quiet)
-            Text(text).font(Theme.line(22)).foregroundStyle(Theme.ink)
+            Text(text).font(Theme.entrySmall).foregroundStyle(Theme.ink)
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)

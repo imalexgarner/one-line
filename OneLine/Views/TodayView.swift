@@ -21,7 +21,7 @@ struct TodayView: View {
                         Button { withAnimation(.smooth) { isEditing = true } } label: {
                             EntryLine(text: todays.text, mood: todays.mood)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(PressableButtonStyle(scale: 0.98))
                         .accessibilityHint("Double tap to edit")
                         .transition(.opacity.combined(with: .move(edge: .bottom)))
                     } else {
@@ -53,7 +53,7 @@ struct TodayView: View {
             try? context.upsertEntry(day: today, text: text, mood: mood)
             isEditing = false
         }
-        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+        Haptics.success()
     }
 }
 

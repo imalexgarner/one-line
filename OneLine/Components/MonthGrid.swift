@@ -10,7 +10,7 @@ struct MonthGrid: View {
     var spacing: CGFloat = 6
     let onSelect: (Date) -> Void
 
-    private let headerHeight: CGFloat = 22
+    private let headerHeight: CGFloat = 26
 
     var body: some View {
         GeometryReader { geo in
@@ -18,12 +18,13 @@ struct MonthGrid: View {
             let rows = max(1, cells.count / 7)
             let colWidth = (geo.size.width - 6 * spacing) / 7
             let availableHeight = geo.size.height - headerHeight - spacing
-            let cellHeight = min(colWidth * 1.35, (availableHeight - CGFloat(rows - 1) * spacing) / CGFloat(rows))
+            let cellHeight = min(colWidth * 1.5, (availableHeight - CGFloat(rows - 1) * spacing) / CGFloat(rows))
 
             VStack(spacing: spacing) {
                 HStack(spacing: spacing) {
                     ForEach(Array(MonthLayout.weekdaySymbols().enumerated()), id: \.offset) { _, symbol in
                         Text(symbol).font(Theme.caption).foregroundStyle(Theme.quiet)
+                            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                             .frame(width: colWidth, height: headerHeight)
                     }
                 }

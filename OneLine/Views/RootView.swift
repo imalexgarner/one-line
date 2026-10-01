@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RootView: View {
     @Environment(\.modelContext) private var context
+    @AppStorage("hasOnboarded") private var hasOnboarded = false
 
     enum Page: Int { case today, year, timeline, settings }
 
@@ -14,7 +15,7 @@ struct RootView: View {
         #endif
     }()
 
-    var body: some View {
+    private var tabs: some View {
         TabView(selection: $selection) {
             Tab("", systemImage: "plus.app", value: Page.today) { TodayView() }
             Tab("", systemImage: "calendar", value: Page.year) { YearView() }
@@ -22,6 +23,19 @@ struct RootView: View {
             Tab("", systemImage: "switch.2", value: Page.settings) { SettingsView() }
         }
         .tint(Theme.ink)
+    }
+
+    /// The tabs are only mounted after the welcome flow, so Today's autofocused editor
+    /// doesn't raise the keyboard behind it.
+    var body: some View {
+        Group {
+            if hasOnboarded {
+                tabs.transition(.opacity)
+            } else {
+                WelcomeView { hasOnboarded = true }.transition(.opacity)
+            }
+        }
+        .animation(.smooth, value: hasOnboarded)
         #if DEBUG
         .task {
             // `-seedDemo 1` on launch fills the journal with sample lines.

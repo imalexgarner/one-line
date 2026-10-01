@@ -22,6 +22,7 @@ struct MoodPicker: View {
                     .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
             }
         }
+        .sensoryFeedback(.selection, trigger: selection)
     }
 }
 

@@ -23,12 +23,13 @@ struct DayTile: View {
                 .overlay {
                     if showsNumber {
                         Text("\(Calendar.current.component(.day, from: day))")
-                            .font(.system(.callout, design: .serif).weight(mark == nil ? .regular : .semibold))
+                            .font(Theme.number.weight(mark == nil ? .regular : .semibold))
                             .foregroundStyle(mark?.mood.onColor ?? Theme.quiet)
+                            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)   // it has to fit inside a tile
                     }
                 }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle(scale: 0.88))
         .disabled(day > today)
         .accessibilityLabel(day.formatted(.dateTime.month(.wide).day()))
         .accessibilityValue(mark.map { "\($0.mood.name): \($0.text)" } ?? "No entry")

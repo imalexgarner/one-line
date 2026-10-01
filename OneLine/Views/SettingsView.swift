@@ -34,25 +34,26 @@ struct SettingsView: View {
                         }
                         .font(.footnote)
                     }
-                } header: { Text("Reminder") } footer: {
-                    Text("A quiet nudge at the same time each day. It never leaves your device.")
+                } header: { Text("Reminder").font(Theme.caption) } footer: {
+                    Text("A quiet nudge at the same time each day. It never leaves your device.").font(Theme.caption)
                 }
 
-                Section("Your journal") {
+                Section {
                     LabeledContent("Lines kept", value: "\(entries.count)")
-                }
+                } header: { Text("Your journal").font(Theme.caption) }
 
                 #if DEBUG
                 Section {
                     Button("Load sample data") { SampleData.populate(into: context) }
                     Button("Delete all lines", role: .destructive) { SampleData.clear(context) }
-                } header: { Text("Developer") } footer: {
-                    Text("Debug builds only. Sample data fills about 14 months, leaving today blank.")
+                } header: { Text("Developer").font(Theme.caption) } footer: {
+                    Text("Debug builds only. Sample data fills about 14 months, leaving today blank.").font(Theme.caption)
                 }
                 #endif
             }
-            .font(.system(.body, design: .serif))
+            .font(Theme.body)
             .scrollContentBackground(.hidden)
+            .contentMargins(.top, 0, for: .scrollContent)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background { Theme.paper.ignoresSafeArea() }

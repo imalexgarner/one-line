@@ -1,20 +1,32 @@
 import SwiftUI
 
-/// A quiet centred message for screens with nothing to show yet.
+/// A quiet centred message for places with nothing to show yet.
 ///
-///     list.overlay { if items.isEmpty { EmptyState("Nothing kept yet.") } }
+///     EmptyState("Nothing kept yet", message: "Your lines will gather here.")
 struct EmptyState: View {
-    let message: String
+    let title: String
+    var message: String?
 
-    init(_ message: String) { self.message = message }
+    init(_ title: String, message: String? = nil) {
+        self.title = title
+        self.message = message
+    }
 
     var body: some View {
-        Text(message).font(Theme.caption).foregroundStyle(Theme.quiet)
+        VStack(spacing: 8) {
+            Text(title).font(Theme.entrySmall).foregroundStyle(Theme.ink)
+            if let message {
+                Text(message).font(Theme.caption).foregroundStyle(Theme.quiet)
+            }
+        }
+        .multilineTextAlignment(.center)
+        .accessibilityElement(children: .combine)
     }
 }
 
 #if DEBUG
 #Preview {
-    EmptyState("Nothing kept yet.").frame(height: 200).frame(maxWidth: .infinity).background(Theme.paper)
+    EmptyState("Nothing kept yet", message: "Your lines will gather here, month by month.")
+        .padding(28).frame(maxWidth: .infinity, minHeight: 240).background(Theme.paper)
 }
 #endif

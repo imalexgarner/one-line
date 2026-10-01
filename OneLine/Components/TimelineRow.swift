@@ -14,7 +14,7 @@ struct TimelineRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(day.formatted(.dateTime.weekday(.abbreviated).day()))
                     .font(Theme.caption).foregroundStyle(Theme.quiet)
-                Text(text).font(Theme.line(19)).foregroundStyle(Theme.ink)
+                Text(text).font(Theme.entrySmall).foregroundStyle(Theme.ink)
             }
         }
         .accessibilityElement(children: .combine)

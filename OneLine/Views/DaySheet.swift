@@ -17,24 +17,25 @@ struct DaySheet: View {
     private var entry: Entry? { matches.first }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 28) {
-            VStack(alignment: .leading, spacing: 6) {
-                Text(day.formatted(.dateTime.weekday(.wide).month(.wide).day().year()))
-                    .font(Theme.caption).foregroundStyle(Theme.quiet)
-                Text(title).font(Theme.line(26)).foregroundStyle(Theme.ink)
-            }
+        VStack(spacing: 0) {
+            ScreenHeader(eyebrow: day.formatted(.dateTime.weekday(.wide).month(.wide).day().year()), title: title)
             content
+                .padding(.horizontal, Theme.margin)
+                .frame(maxWidth: .infinity, alignment: .leading)
             Spacer(minLength: 0)
         }
-        .padding(28)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background { Theme.paper.ignoresSafeArea() }
         .presentationDetents([.medium, .large])
     }
 
     private var title: String {
-        if EditWindow.isEditable(day) { return entry == nil ? "What was one thing?" : "Change your line." }
-        return entry == nil ? "Not kept." : ""
+        switch (EditWindow.isEditable(day), entry == nil) {
+        case (true, true): "What was one thing?"
+        case (true, false): "Change your line."
+        case (false, false): "Kept."
+        case (false, true): "Not kept."
+        }
     }
 
     @ViewBuilder private var content: some View {
@@ -42,6 +43,7 @@ struct DaySheet: View {
             EntryEditor(text: entry?.text ?? "", mood: entry?.mood ?? .calm,
                         buttonTitle: entry == nil ? "Keep it" : "Save") { text, mood in
                 try? context.upsertEntry(day: day, text: text, mood: mood)
+                Haptics.success()
                 dismiss()
             }
         } else if let entry {

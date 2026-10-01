@@ -14,7 +14,7 @@ struct PrimaryButton: View {
 
     var body: some View {
         Button(action: action) {
-            Text(title).font(.system(.body, design: .serif).weight(.semibold))
+            Text(title).font(Theme.button)
                 .frame(maxWidth: .infinity).padding(.vertical, 14)
         }
         .buttonStyle(.borderedProminent).tint(Theme.ink)

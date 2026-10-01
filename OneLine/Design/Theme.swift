@@ -1,6 +1,8 @@
 import SwiftUI
 
 enum Theme {
+    // MARK: Colour
+
     static let paper = Color(uiColor: UIColor { t in
         t.userInterfaceStyle == .dark
             ? UIColor(red: 0.09, green: 0.085, blue: 0.08, alpha: 1)
@@ -13,10 +15,29 @@ enum Theme {
     })
     static let quiet = ink.opacity(0.5)
 
-    /// Horizontal page margin shared by every screen.
-    static let margin: CGFloat = 28
-    static let title = line(30)
+    // MARK: Layout
 
-    static func line(_ size: CGFloat = 26) -> Font { .system(size: size, weight: .regular, design: .serif) }
-    static let caption = Font.system(.footnote, design: .serif).italic()
+    /// Horizontal page margin shared by every screen and sheet.
+    static let margin: CGFloat = 28
+
+    // MARK: Type scale
+    //
+    // Serif is for the writing and for titles; everything that supports it is upright sans.
+    // Every style is a text style, so all of them follow Dynamic Type.
+
+    static let title = Font.system(.title, design: .serif)
+    /// The line you write: the editor, a kept line.
+    static let entry = Font.system(.title2, design: .serif)
+    /// A line shown smaller: memory card, timeline row.
+    static let entrySmall = Font.system(.title3, design: .serif)
+    /// Row text in Settings.
+    static let body = Font.system(.body, design: .serif)
+    static let sectionHeader = Font.system(.subheadline, design: .serif).weight(.semibold)
+    static let button = Font.system(.body, design: .serif).weight(.semibold)
+    /// Day numbers in the calendar.
+    static let number = Font.system(.callout, design: .serif)
+    /// Supporting text: eyebrows, dates, weekday headings, hints.
+    static let caption = Font.system(.callout)
+    /// Small uppercase labels, e.g. "1 YEAR AGO TODAY".
+    static let label = Font.system(.caption).weight(.semibold)
 }

@@ -9,8 +9,12 @@ struct ScreenHeader: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(eyebrow).font(Theme.caption).foregroundStyle(Theme.quiet)
+                .contentTransition(.numericText())
             Text(title).font(Theme.title).foregroundStyle(Theme.ink)
+                .contentTransition(.numericText())
         }
+        .animation(.snappy, value: eyebrow)
+        .animation(.snappy, value: title)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, Theme.margin)
         .padding(.top, 24)

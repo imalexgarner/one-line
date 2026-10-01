@@ -33,7 +33,16 @@ struct YearView: View {
         return start
         #endif
     }()
-    @State private var selected: DayID?
+    @State private var selected: DayID? = {
+        #if DEBUG
+        // `-debugOpenDaysAgo 3` opens that day's sheet on launch, for checking the sheet layout.
+        if let raw = UserDefaults.standard.string(forKey: "debugOpenDaysAgo"), let ago = Int(raw),
+           let date = Calendar.current.date(byAdding: .day, value: -ago, to: Calendar.current.startOfDay(for: .now)) {
+            return DayID(date: date)
+        }
+        #endif
+        return nil
+    }()
 
     private struct DayID: Identifiable { let date: Date; var id: Date { date } }
 
@@ -82,29 +91,50 @@ struct YearView: View {
             .padding(.horizontal, Theme.margin)
             .padding(.bottom, 20)
 
-            switch mode {
-            case .year:
-                TabView(selection: $yearPage) {
-                    ForEach(years, id: \.self) { year in
-                        YearGrid(year: year, marks: marks, today: today) { selected = DayID(date: $0) }
-                            .tag(year)
+            Group {
+                switch mode {
+                case .year:
+                    TabView(selection: $yearPage) {
+                        ForEach(years, id: \.self) { year in
+                            YearGrid(year: year, marks: marks, today: today, onSelect: open)
+                                .tag(year)
+                        }
                     }
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-            case .month:
-                TabView(selection: $monthPage) {
-                    ForEach(months, id: \.self) { month in
-                        MonthGrid(month: month, marks: marks, today: today) { selected = DayID(date: $0) }
-                            .tag(month)
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+                    .sensoryFeedback(.selection, trigger: yearPage)
+                    .transition(.opacity)
+                case .month:
+                    TabView(selection: $monthPage) {
+                        ForEach(months, id: \.self) { month in
+                            MonthPage(month: month, marks: marks, today: today, onSelect: open)
+                                .tag(month)
+                        }
                     }
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+                    .sensoryFeedback(.selection, trigger: monthPage)
+                    .transition(.opacity)
                 }
-                .tabViewStyle(.page(indexDisplayMode: .never))
+            }
+            .overlay {
+                if entries.isEmpty {
+                    EmptyState("Your year starts today", message: "Write your first line and its tile fills with colour.")
+                        .padding(24)
+                        .background(Theme.paper, in: RoundedRectangle(cornerRadius: 20))
+                        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Theme.ink.opacity(0.08)))
+                        .padding(Theme.margin)
+                        .allowsHitTesting(false)
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background { Theme.paper.ignoresSafeArea() }
         .sheet(item: $selected) { DaySheet(day: $0.date) }
         .onChange(of: mode) { _, new in syncPages(to: new) }
+    }
+
+    private func open(_ day: Date) {
+        Haptics.selection()
+        selected = DayID(date: day)
     }
 
     /// Keep the two pagers pointing at the same moment when the user flips between them.

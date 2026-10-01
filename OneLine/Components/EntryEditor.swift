@@ -25,7 +25,7 @@ struct EntryEditor: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             TextField("One line…", text: $draft, axis: .vertical)
-                .font(Theme.line()).foregroundStyle(Theme.ink)
+                .font(Theme.entry).foregroundStyle(Theme.ink)
                 .lineLimit(1...4)
                 .focused($focused)
                 .submitLabel(.done)

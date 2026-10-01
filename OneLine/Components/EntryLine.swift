@@ -10,9 +10,10 @@ struct EntryLine: View {
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
             RoundedRectangle(cornerRadius: 3).fill(mood.color).frame(width: 6)
-            Text(text).font(Theme.line()).foregroundStyle(Theme.ink)
+            Text(text).font(Theme.entry).foregroundStyle(Theme.ink)
                 .multilineTextAlignment(.leading)
         }
+        .fixedSize(horizontal: false, vertical: true)   // the bar matches the text, never the container
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
