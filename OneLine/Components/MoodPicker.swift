@@ -10,16 +10,16 @@ struct MoodPicker: View {
     var compact = false
 
     var body: some View {
-        let size: CGFloat = compact ? 18 : 30
+        let size: CGFloat = compact ? 24 : 30
         HStack(spacing: compact ? 0 : 14) {
             ForEach(moods) { mood in
                 // Compact: spread the circles evenly across the full toolbar width.
                 if compact && mood != moods.first { Spacer(minLength: 0) }
                 let isSelected = selection == mood
                 Circle().fill(mood.color)
-                    .frame(width: isSelected ? size + (compact ? 4 : 8) : size, height: isSelected ? size + (compact ? 4 : 8) : size)
-                    .overlay(Circle().stroke(Theme.ink, lineWidth: isSelected ? 2 : 0).padding(compact ? -2 : -4))
-                    .frame(width: compact ? 28 : 40, height: compact ? 28 : 40)
+                    .frame(width: isSelected ? size + (compact ? 0 : 8) : size, height: isSelected ? size + (compact ? 0 : 8) : size)
+                    .overlay(Circle().stroke(Theme.ink, lineWidth: isSelected ? 2 : 0).padding(compact ? -3 : -4))
+                    .frame(width: compact ? 24 : 40, height: compact ? 24 : 40)
                     .contentShape(Rectangle())
                     .onTapGesture { withAnimation(.snappy) { selection = mood } }
                     .accessibilityElement()
