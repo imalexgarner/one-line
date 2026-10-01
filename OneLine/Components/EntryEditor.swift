@@ -22,6 +22,12 @@ struct EntryEditor: View {
 
     private var canSave: Bool { !EntryText.final(draft).isEmpty }
 
+    private func confirm() {
+        guard canSave else { return }
+        focused = false
+        onSave(EntryText.final(draft), mood)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             TextField("One line…", text: $draft, axis: .vertical)
@@ -34,11 +40,16 @@ struct EntryEditor: View {
                     if limited != new { draft = limited }
                 }
             MoodPicker(selection: $mood)
-            PrimaryButton(buttonTitle) {
-                focused = false
-                onSave(EntryText.final(draft), mood)
+            PrimaryButton(buttonTitle, action: confirm)
+                .disabled(!canSave)
+        }
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button(action: confirm) { Image(systemName: "checkmark") }
+                    .disabled(!canSave)
+                    .accessibilityLabel(buttonTitle)
             }
-            .disabled(!canSave)
         }
         .task {
             try? await Task.sleep(for: .milliseconds(350))

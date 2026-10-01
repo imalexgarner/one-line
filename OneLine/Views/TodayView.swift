@@ -6,6 +6,7 @@ struct TodayView: View {
     @Query(sort: \Entry.day, order: .reverse) private var entries: [Entry]
 
     @State private var isEditing = false
+    @State private var keyboardUp = false
 
     private var today: Date { Calendar.current.startOfDay(for: .now) }
     private var todays: Entry? { entries.first { $0.day == today } }
@@ -16,7 +17,8 @@ struct TodayView: View {
             VStack(alignment: .leading, spacing: 0) {
                 ScreenHeader(eyebrow: today.formatted(.dateTime.weekday(.wide).month(.wide).day()), title: headline)
                 VStack(alignment: .leading, spacing: 36) {
-                    HeroIllustration("oc-growing")
+                    HeroIllustration("oc-growing", height: keyboardUp ? 96 : 200,
+                                     alignment: keyboardUp ? .leading : .center)
                     if let todays, !isEditing {
                         Button { withAnimation(.smooth) { isEditing = true } } label: {
                             EntryLine(text: todays.text, mood: todays.mood)
@@ -40,6 +42,12 @@ struct TodayView: View {
             }
         }
         .scrollDismissesKeyboard(.interactively)
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+            withAnimation(.smooth) { keyboardUp = true }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            withAnimation(.smooth) { keyboardUp = false }
+        }
         .background { Theme.paper.ignoresSafeArea() }
     }
 

@@ -25,6 +25,9 @@ struct SettingsView: View {
             Form {
                 Section {
                     Toggle("Daily reminder", isOn: Binding(get: { enabled }, set: { on in Task { await setEnabled(on) } }))
+                        // The app-wide ink tint makes the "on" track near-white in dark mode, which
+                        // is low contrast against the knob. Use the system green so on/off is obvious.
+                        .tint(.green)
                     if enabled {
                         DatePicker("Time", selection: reminderTime, displayedComponents: .hourAndMinute)
                     }
