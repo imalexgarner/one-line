@@ -48,6 +48,7 @@ struct TodayView: View {
         }
         .navigationTitle(headline)
         .navigationBarTitleDisplayMode(.large)
+        .softTopEdge()
         .scrollDismissesKeyboard(.interactively)
         .trackKeyboard($keyboardUp)
         .onPreferenceChange(EntryCanSaveKey.self) { canSave = $0 }

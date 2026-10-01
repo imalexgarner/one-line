@@ -42,6 +42,7 @@ struct TimelineView: View {
             .environment(\.defaultMinListHeaderHeight, 0)
             .contentMargins(.top, 0, for: .scrollContent)
             .scrollContentBackground(.hidden)
+            .softTopEdge()
             .overlay { if entries.isEmpty { EmptyState("Nothing kept yet", message: "Your lines will gather here, month by month.") } }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

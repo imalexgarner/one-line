@@ -51,6 +51,7 @@ struct SettingsView: View {
             }
             .font(Theme.body)
             .scrollContentBackground(.hidden)
+            .softTopEdge()
             .contentMargins(.top, 0, for: .scrollContent)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
