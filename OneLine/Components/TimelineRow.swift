@@ -17,6 +17,7 @@ struct TimelineRow: View {
                 Text(text).font(Theme.entrySmall).foregroundStyle(Theme.ink)
             }
         }
+        .padding(.vertical, 12)
         .accessibilityElement(children: .combine)
     }
 }
