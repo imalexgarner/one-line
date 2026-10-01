@@ -28,6 +28,25 @@ struct EntryEditor: View {
         onSave(EntryText.final(draft), mood)
     }
 
+    private var moodMenu: some View {
+        Menu {
+            Picker("Mood", selection: $mood) {
+                ForEach(Mood.allCases) { m in
+                    Label(m.name, systemImage: "circle.fill").tint(m.color).tag(m)
+                }
+            }
+        } label: {
+            HStack(spacing: 8) {
+                Circle().fill(mood.color).frame(width: 20, height: 20)
+                Text(mood.name).font(Theme.caption).foregroundStyle(Theme.ink)
+                Image(systemName: "chevron.up.chevron.down").font(.caption2).foregroundStyle(Theme.quiet)
+            }
+            .padding(.vertical, 6)
+        }
+        .sensoryFeedback(.selection, trigger: mood)
+        .accessibilityLabel("Mood, \(mood.name)")
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             TextField("One line…", text: $draft, axis: .vertical)
@@ -46,18 +65,19 @@ struct EntryEditor: View {
                     let limited = EntryText.limit(new)
                     if limited != new { draft = limited }
                 }
-            PrimaryButton(buttonTitle, action: confirm)
-                .disabled(!canSave)
         }
         .toolbar {
             ToolbarItem(placement: .keyboard) {
-                // Full-width bar: colours leading, the chosen mood's name trailing.
-                HStack(spacing: 0) {
-                    MoodPicker(selection: $mood, compact: true)
+                // Full-width bar: mood pulldown leading, the primary action trailing.
+                HStack(spacing: 12) {
+                    moodMenu
                     Spacer(minLength: 0)
-                    Text(mood.name)
-                        .font(Theme.caption).foregroundStyle(Theme.quiet)
-                        .padding(8)
+                    Button(action: confirm) {
+                        Text(buttonTitle).font(Theme.button).padding(.horizontal, 8)
+                    }
+                    .buttonStyle(.borderedProminent).tint(Theme.ink)
+                    .foregroundStyle(Theme.paper)
+                    .disabled(!canSave)
                 }
                 .frame(maxWidth: .infinity)
             }
