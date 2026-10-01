@@ -1,0 +1,33 @@
+name: OneLine
+options:
+  bundleIdPrefix: com.alexgarner
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+targets:
+  OneLine:
+    type: application
+    platform: iOS
+    sources: [OneLine]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.alexgarner.oneline
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_CFBundleDisplayName: OneLine
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
+  OneLineTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [OneLineTests]
+    dependencies:
+      - target: OneLine
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.alexgarner.oneline.tests
