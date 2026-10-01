@@ -21,7 +21,7 @@ struct SettingsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ScreenHeader(eyebrow: "Make it yours", title: "Settings")
+            ScreenHeader(title: "Settings")
             Form {
                 Section {
                     Toggle("Daily reminder", isOn: Binding(get: { enabled }, set: { on in Task { await setEnabled(on) } }))

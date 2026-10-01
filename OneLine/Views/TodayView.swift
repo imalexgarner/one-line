@@ -19,7 +19,7 @@ struct TodayView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                ScreenHeader(eyebrow: today.formatted(.dateTime.weekday(.wide).month(.wide).day()), title: headline)
+                ScreenHeader(title: headline)
                 VStack(alignment: .leading, spacing: 36) {
                     HeroIllustration("nc-improve-signup-experience", height: keyboardUp ? 96 : 200,
                                      alignment: keyboardUp ? .leading : .center)

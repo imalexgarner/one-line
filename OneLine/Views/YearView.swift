@@ -81,7 +81,6 @@ struct YearView: View {
         let marks = DayMark.marks(from: entries)
         VStack(spacing: 0) {
             ScreenHeader(
-                eyebrow: "\(keptCount) \(keptCount == 1 ? "day" : "days") kept",
                 title: mode == .year ? String(yearPage) : monthPage.formatted(.dateTime.month(.wide).year())
             )
             Picker("View", selection: $mode.animation(.snappy)) {

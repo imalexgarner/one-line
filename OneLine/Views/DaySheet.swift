@@ -22,7 +22,7 @@ struct DaySheet: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ScreenHeader(eyebrow: day.formatted(.dateTime.weekday(.wide).month(.wide).day().year()), title: title)
+            ScreenHeader(title: title)
             content
                 .padding(.horizontal, Theme.margin)
                 .frame(maxWidth: .infinity, alignment: .leading)

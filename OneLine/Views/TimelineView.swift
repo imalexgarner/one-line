@@ -19,7 +19,7 @@ struct TimelineView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ScreenHeader(eyebrow: "\(entries.count) \(entries.count == 1 ? "line" : "lines") kept", title: "Timeline")
+            ScreenHeader(title: "Timeline")
             List {
                 ForEach(groups) { group in
                     Section {
