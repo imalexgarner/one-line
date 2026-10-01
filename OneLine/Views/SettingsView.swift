@@ -37,9 +37,7 @@ struct SettingsView: View {
                         }
                         .font(.footnote)
                     }
-                } header: { Text("Reminder").font(Theme.caption) } footer: {
-                    Text("A quiet nudge at the same time each day. It never leaves your device.").font(Theme.caption)
-                }
+                } header: { Text("Reminder").font(Theme.caption) }
 
                 Section {
                     LabeledContent("Lines kept", value: "\(entries.count)")
@@ -49,9 +47,7 @@ struct SettingsView: View {
                 Section {
                     Button("Load sample data") { SampleData.populate(into: context) }
                     Button("Delete all lines", role: .destructive) { SampleData.clear(context) }
-                } header: { Text("Developer").font(Theme.caption) } footer: {
-                    Text("Debug builds only. Sample data fills about 14 months, leaving today blank.").font(Theme.caption)
-                }
+                } header: { Text("Developer").font(Theme.caption) }
                 #endif
             }
             .font(Theme.body)
