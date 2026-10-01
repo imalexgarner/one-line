@@ -65,21 +65,18 @@ struct EntryEditor: View {
                     let limited = EntryText.limit(new)
                     if limited != new { draft = limited }
                 }
-            moodMenu
         }
         .toolbar {
-            ToolbarItem(placement: .keyboard) {
-                // Full-width bar: the primary action, trailing.
-                HStack(spacing: 12) {
-                    Spacer(minLength: 0)
-                    Button(action: confirm) {
-                        Text(buttonTitle).font(Theme.button).padding(.horizontal, 8)
-                    }
-                    .buttonStyle(.borderedProminent).tint(Theme.ink)
-                    .foregroundStyle(Theme.paper)
-                    .disabled(!canSave)
+            // Two separate keyboard-toolbar items: mood menu leading, save trailing.
+            ToolbarItemGroup(placement: .keyboard) {
+                moodMenu
+                Spacer()
+                Button(action: confirm) {
+                    Text(buttonTitle).font(Theme.button).padding(.horizontal, 8)
                 }
-                .frame(maxWidth: .infinity)
+                .buttonStyle(.borderedProminent).tint(Theme.ink)
+                .foregroundStyle(Theme.paper)
+                .disabled(!canSave)
             }
         }
         .task {
