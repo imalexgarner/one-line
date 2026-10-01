@@ -25,23 +25,15 @@ struct TimelineView: View {
                         ForEach(group.entries) { e in
                             TimelineRow(day: e.day, text: e.text, mood: e.mood)
                                 .listRowBackground(Theme.paper)
-                                .listRowInsets(EdgeInsets(top: 10, leading: Theme.margin, bottom: 10, trailing: Theme.margin))
                         }
                         .onDelete { offsets in offsets.map { group.entries[$0] }.forEach(context.delete) }
                     } header: {
                         Text(group.month.formatted(.dateTime.month(.wide).year()))
-                            .font(Theme.sectionHeader)
-                            .fontDesign(.serif)   // List headers can drop the design from the font alone
-                            .foregroundStyle(Theme.ink)
                             .textCase(nil)
-                            .padding(.leading, Theme.margin - 16)
                     }
                 }
             }
             .listStyle(.plain)
-            .listSectionSpacing(.compact)
-            .environment(\.defaultMinListHeaderHeight, 0)
-            .contentMargins(.top, 0, for: .scrollContent)
             .scrollContentBackground(.hidden)
             .softTopEdge()
             .overlay { if entries.isEmpty { EmptyState("Nothing kept yet", message: "Your lines will gather here, month by month.") } }
