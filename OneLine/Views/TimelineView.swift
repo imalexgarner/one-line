@@ -18,8 +18,7 @@ struct TimelineView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            ScreenHeader(title: "Timeline")
+        Group {
             List {
                 ForEach(groups) { group in
                     Section {
@@ -47,6 +46,8 @@ struct TimelineView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background { Theme.paper.ignoresSafeArea() }
+        .navigationTitle("Timeline")
+        .navigationBarTitleDisplayMode(.large)
     }
 }
 

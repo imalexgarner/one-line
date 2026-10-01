@@ -8,11 +8,12 @@ enum Theme {
             ? UIColor(red: 0.09, green: 0.085, blue: 0.08, alpha: 1)
             : UIColor(red: 0.975, green: 0.96, blue: 0.93, alpha: 1)
     })
-    static let ink = Color(uiColor: UIColor { t in
+    static let inkUI = UIColor { t in
         t.userInterfaceStyle == .dark
             ? UIColor(red: 0.93, green: 0.91, blue: 0.87, alpha: 1)
             : UIColor(red: 0.13, green: 0.12, blue: 0.11, alpha: 1)
-    })
+    }
+    static let ink = Color(uiColor: inkUI)
     static let quiet = ink.opacity(0.5)
 
     // MARK: Layout

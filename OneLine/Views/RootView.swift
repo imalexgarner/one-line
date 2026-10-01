@@ -17,10 +17,10 @@ struct RootView: View {
 
     private var tabs: some View {
         TabView(selection: $selection) {
-            Tab("", systemImage: "plus.app", value: Page.today) { TodayView() }
-            Tab("", systemImage: "calendar", value: Page.year) { YearView() }
-            Tab("", systemImage: "calendar.day.timeline.left", value: Page.timeline) { TimelineView() }
-            Tab("", systemImage: "switch.2", value: Page.settings) { SettingsView() }
+            Tab("", systemImage: "plus.app", value: Page.today) { NavigationStack { TodayView() } }
+            Tab("", systemImage: "calendar", value: Page.year) { NavigationStack { YearView() } }
+            Tab("", systemImage: "calendar.day.timeline.left", value: Page.timeline) { NavigationStack { TimelineView() } }
+            Tab("", systemImage: "switch.2", value: Page.settings) { NavigationStack { SettingsView() } }
         }
         .tint(Theme.ink)
     }

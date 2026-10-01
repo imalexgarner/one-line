@@ -80,9 +80,6 @@ struct YearView: View {
     var body: some View {
         let marks = DayMark.marks(from: entries)
         VStack(spacing: 0) {
-            ScreenHeader(
-                title: mode == .year ? String(yearPage) : monthPage.formatted(.dateTime.month(.wide).year())
-            )
             Picker("View", selection: $mode.animation(.snappy)) {
                 ForEach(Mode.allCases) { Text($0.rawValue).tag($0) }
             }
@@ -127,6 +124,8 @@ struct YearView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background { Theme.paper.ignoresSafeArea() }
+        .navigationTitle(mode == .year ? String(yearPage) : monthPage.formatted(.dateTime.month(.wide).year()))
+        .navigationBarTitleDisplayMode(.large)
         .sheet(item: $selected) { DaySheet(day: $0.date) }
         .onChange(of: mode) { _, new in syncPages(to: new) }
     }

@@ -20,8 +20,7 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            ScreenHeader(title: "Settings")
+        Group {
             Form {
                 Section {
                     Toggle("Daily reminder", isOn: Binding(get: { enabled }, set: { on in Task { await setEnabled(on) } }))
@@ -56,6 +55,8 @@ struct SettingsView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background { Theme.paper.ignoresSafeArea() }
+        .navigationTitle("Settings")
+        .navigationBarTitleDisplayMode(.large)
         .task { await syncPermission() }
         .onChange(of: minutes) { _, new in
             if enabled { Task { await Reminder.schedule(minutes: new) } }

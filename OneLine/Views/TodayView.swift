@@ -19,7 +19,6 @@ struct TodayView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                ScreenHeader(title: headline)
                 VStack(alignment: .leading, spacing: 36) {
                     HeroIllustration("nc-improve-signup-experience", height: keyboardUp ? 96 : 200,
                                      alignment: keyboardUp ? .leading : .center)
@@ -43,9 +42,12 @@ struct TodayView: View {
                     }
                 }
                 .padding(.horizontal, Theme.margin)
+                .padding(.top, 8)
                 .padding(.bottom, 24)
             }
         }
+        .navigationTitle(headline)
+        .navigationBarTitleDisplayMode(.large)
         .scrollDismissesKeyboard(.interactively)
         .trackKeyboard($keyboardUp)
         .onPreferenceChange(EntryCanSaveKey.self) { canSave = $0 }
