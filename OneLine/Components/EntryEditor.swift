@@ -1,22 +1,24 @@
 import SwiftUI
 
-/// The one-line composer: text, mood colour, save. Autofocuses so the daily loop is open, type, keep.
+/// The one-line composer: the text field. Autofocuses so the daily loop is open, type, keep.
+/// The mood menu and save button live in `EntryKeyboardBar`, placed by the host above the keyboard.
+/// The host requests a save by bumping `saveRequest`; the editor reports `canSave` via `EntryCanSaveKey`.
 ///
-///     EntryEditor { text, mood in save(text, mood) }
-///     EntryEditor(text: entry.text, mood: entry.mood, buttonTitle: "Save") { text, mood in … }
+///     EntryEditor(mood: $mood, saveRequest: saveRequest) { text, mood in save(text, mood) }
+///     EntryEditor(text: entry.text, mood: $mood, saveRequest: saveRequest) { text, mood in … }
 struct EntryEditor: View {
-    var buttonTitle = "Keep it"
+    @Binding var mood: Mood
+    var saveRequest = 0
     var onSave: (String, Mood) -> Void
 
     @State private var draft: String
-    @State private var mood: Mood
     @FocusState private var focused: Bool
 
-    init(text: String = "", mood: Mood = .calm, buttonTitle: String = "Keep it",
+    init(text: String = "", mood: Binding<Mood>, saveRequest: Int = 0,
          onSave: @escaping (String, Mood) -> Void) {
         _draft = State(initialValue: text)
-        _mood = State(initialValue: mood)
-        self.buttonTitle = buttonTitle
+        _mood = mood
+        self.saveRequest = saveRequest
         self.onSave = onSave
     }
 
@@ -26,25 +28,6 @@ struct EntryEditor: View {
         guard canSave else { return }
         focused = false
         onSave(EntryText.final(draft), mood)
-    }
-
-    private var moodMenu: some View {
-        Menu {
-            Picker("Mood", selection: $mood) {
-                ForEach(Mood.allCases) { m in
-                    Label(m.name, systemImage: "circle.fill").tint(m.color).tag(m)
-                }
-            }
-        } label: {
-            HStack(spacing: 8) {
-                Circle().fill(mood.color).frame(width: 20, height: 20)
-                Text(mood.name).font(Theme.caption).foregroundStyle(Theme.ink)
-                Image(systemName: "chevron.up.chevron.down").font(.caption2).foregroundStyle(Theme.quiet)
-            }
-            .padding(.vertical, 6)
-        }
-        .sensoryFeedback(.selection, trigger: mood)
-        .accessibilityLabel("Mood, \(mood.name)")
     }
 
     var body: some View {
@@ -66,19 +49,8 @@ struct EntryEditor: View {
                     if limited != new { draft = limited }
                 }
         }
-        .toolbar {
-            // Two separate keyboard-toolbar items: mood menu leading, save trailing.
-            ToolbarItemGroup(placement: .keyboard) {
-                moodMenu
-                Spacer()
-                Button(action: confirm) {
-                    Text(buttonTitle).font(Theme.button).padding(.horizontal, 8)
-                }
-                .buttonStyle(.borderedProminent).tint(Theme.ink)
-                .foregroundStyle(Theme.paper)
-                .disabled(!canSave)
-            }
-        }
+        .onChange(of: saveRequest) { _, _ in confirm() }
+        .preference(key: EntryCanSaveKey.self, value: canSave)
         .task {
             try? await Task.sleep(for: .milliseconds(350))
             focused = true
@@ -88,11 +60,13 @@ struct EntryEditor: View {
 
 #if DEBUG
 #Preview("New") {
-    EntryEditor { _, _ in }.padding(28).background(Theme.paper)
+    @Previewable @State var mood: Mood = .calm
+    EntryEditor(mood: $mood) { _, _ in }.padding(28).background(Theme.paper)
 }
 
 #Preview("Editing") {
-    EntryEditor(text: "Rain all day, but the soup was perfect.", mood: .calm, buttonTitle: "Save") { _, _ in }
+    @Previewable @State var mood: Mood = .calm
+    EntryEditor(text: "Rain all day, but the soup was perfect.", mood: $mood) { _, _ in }
         .padding(28).background(Theme.paper)
 }
 #endif

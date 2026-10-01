@@ -7,6 +7,9 @@ struct TodayView: View {
 
     @State private var isEditing = false
     @State private var keyboardUp = false
+    @State private var mood: Mood = .calm
+    @State private var canSave = false
+    @State private var saveRequest = 0
 
     private var today: Date { Calendar.current.startOfDay(for: .now) }
     private var todays: Entry? { entries.first { $0.day == today } }
@@ -27,11 +30,9 @@ struct TodayView: View {
                         .accessibilityHint("Double tap to edit")
                         .transition(.opacity.combined(with: .move(edge: .bottom)))
                     } else {
-                        EntryEditor(
-                            text: todays?.text ?? "",
-                            mood: todays?.mood ?? .calm,
-                            buttonTitle: todays == nil ? "Keep it" : "Save"
-                        ) { text, mood in save(text, mood) }
+                        EntryEditor(text: todays?.text ?? "", mood: $mood, saveRequest: saveRequest) { text, mood in
+                            save(text, mood)
+                        }
                     }
                     if let memory, !isEditing {
                         MemoryCard(label: memory.label, text: memory.entry.text, mood: memory.entry.mood)
@@ -42,11 +43,17 @@ struct TodayView: View {
             }
         }
         .scrollDismissesKeyboard(.interactively)
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
-            withAnimation(.smooth) { keyboardUp = true }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
-            withAnimation(.smooth) { keyboardUp = false }
+        .trackKeyboard($keyboardUp)
+        .onPreferenceChange(EntryCanSaveKey.self) { canSave = $0 }
+        .onAppear { mood = todays?.mood ?? .calm }
+        .onChange(of: isEditing) { _, _ in mood = todays?.mood ?? .calm }
+        .safeAreaInset(edge: .bottom) {
+            if keyboardUp, todays == nil || isEditing {
+                EntryKeyboardBar(mood: $mood, title: todays == nil ? "Keep it" : "Save", canSave: canSave) {
+                    saveRequest += 1
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
         }
         .background { Theme.paper.ignoresSafeArea() }
     }

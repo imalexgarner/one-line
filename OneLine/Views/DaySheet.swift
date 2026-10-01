@@ -8,6 +8,10 @@ struct DaySheet: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @Query private var matches: [Entry]
+    @State private var mood: Mood = .calm
+    @State private var canSave = false
+    @State private var saveRequest = 0
+    @State private var keyboardUp = false
 
     init(day: Date) {
         self.day = day
@@ -27,6 +31,17 @@ struct DaySheet: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background { Theme.paper.ignoresSafeArea() }
         .presentationDetents([.medium, .large])
+        .trackKeyboard($keyboardUp)
+        .onPreferenceChange(EntryCanSaveKey.self) { canSave = $0 }
+        .onAppear { mood = entry?.mood ?? .calm }
+        .safeAreaInset(edge: .bottom) {
+            if keyboardUp, EditWindow.isEditable(day) {
+                EntryKeyboardBar(mood: $mood, title: entry == nil ? "Keep it" : "Save", canSave: canSave) {
+                    saveRequest += 1
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
     }
 
     private var title: String {
@@ -40,8 +55,7 @@ struct DaySheet: View {
 
     @ViewBuilder private var content: some View {
         if EditWindow.isEditable(day) {
-            EntryEditor(text: entry?.text ?? "", mood: entry?.mood ?? .calm,
-                        buttonTitle: entry == nil ? "Keep it" : "Save") { text, mood in
+            EntryEditor(text: entry?.text ?? "", mood: $mood, saveRequest: saveRequest) { text, mood in
                 try? context.upsertEntry(day: day, text: text, mood: mood)
                 Haptics.success()
                 dismiss()
