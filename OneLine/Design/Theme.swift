@@ -30,8 +30,8 @@ enum Theme {
     static let entry = Font.system(.title2, design: .serif)
     /// A line shown smaller: memory card, timeline row.
     static let entrySmall = Font.system(.title3, design: .serif)
-    /// Row text in Settings.
-    static let body = Font.system(.body, design: .serif)
+    /// Row text in Settings: upright sans, not serif.
+    static let body = Font.system(.body)
     static let sectionHeader = Font.system(.subheadline, design: .serif).weight(.semibold)
     static let button = Font.system(.body, design: .serif).weight(.semibold)
     /// Day numbers in the calendar.
