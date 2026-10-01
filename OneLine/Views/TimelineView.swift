@@ -26,6 +26,7 @@ struct TimelineView: View {
                             TimelineRow(day: e.day, text: e.text, mood: e.mood)
                                 .listRowBackground(Theme.paper)
                                 .listRowSeparatorTint(Theme.ink.opacity(0.08))
+                                .alignmentGuide(.listRowSeparatorLeading) { $0[.leading] }   // line starts under the dot
                                 .listRowInsets(.vertical, 0)   // the row's own 12pt is the whole vertical space
                         }
                         .onDelete { offsets in offsets.map { group.entries[$0] }.forEach(context.delete) }
