@@ -65,12 +65,12 @@ struct EntryEditor: View {
                     let limited = EntryText.limit(new)
                     if limited != new { draft = limited }
                 }
+            moodMenu
         }
         .toolbar {
             ToolbarItem(placement: .keyboard) {
-                // Full-width bar: mood pulldown leading, the primary action trailing.
+                // Full-width bar: the primary action, trailing.
                 HStack(spacing: 12) {
-                    moodMenu
                     Spacer(minLength: 0)
                     Button(action: confirm) {
                         Text(buttonTitle).font(Theme.button).padding(.horizontal, 8)
