@@ -1,6 +1,9 @@
 import SwiftUI
 
-/// The one-line composer: text, mood colour, save. Shared by Today and the day sheet.
+/// The one-line composer: text, mood colour, save. Autofocuses so the daily loop is open, type, keep.
+///
+///     EntryEditor { text, mood in save(text, mood) }
+///     EntryEditor(text: entry.text, mood: entry.mood, buttonTitle: "Save") { text, mood in … }
 struct EntryEditor: View {
     var buttonTitle = "Keep it"
     var onSave: (String, Mood) -> Void
@@ -30,28 +33,11 @@ struct EntryEditor: View {
                     let limited = EntryText.limit(new)
                     if limited != new { draft = limited }
                 }
-            HStack(spacing: 14) {
-                ForEach(Mood.allCases) { m in
-                    Circle().fill(m.color)
-                        .frame(width: mood == m ? 38 : 30, height: mood == m ? 38 : 30)
-                        .overlay(Circle().stroke(Theme.ink, lineWidth: mood == m ? 2 : 0).padding(-4))
-                        .frame(width: 40, height: 40)
-                        .contentShape(Rectangle())
-                        .onTapGesture { withAnimation(.snappy) { mood = m } }
-                        .accessibilityElement()
-                        .accessibilityLabel(m.name)
-                        .accessibilityAddTraits(mood == m ? [.isButton, .isSelected] : .isButton)
-                }
-            }
-            Button {
+            MoodPicker(selection: $mood)
+            PrimaryButton(buttonTitle) {
                 focused = false
                 onSave(EntryText.final(draft), mood)
-            } label: {
-                Text(buttonTitle).font(.system(.body, design: .serif).weight(.semibold))
-                    .frame(maxWidth: .infinity).padding(.vertical, 14)
             }
-            .buttonStyle(.borderedProminent).tint(Theme.ink)
-            .foregroundStyle(Theme.paper)
             .disabled(!canSave)
         }
         .task {

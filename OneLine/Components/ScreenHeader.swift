@@ -7,7 +7,7 @@ struct ScreenHeader: View {
     let title: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
             Text(eyebrow).font(Theme.caption).foregroundStyle(Theme.quiet)
             Text(title).font(Theme.title).foregroundStyle(Theme.ink)
         }

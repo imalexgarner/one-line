@@ -45,10 +45,7 @@ struct DaySheet: View {
                 dismiss()
             }
         } else if let entry {
-            HStack(alignment: .top, spacing: 16) {
-                RoundedRectangle(cornerRadius: 3).fill(entry.mood.color).frame(width: 6)
-                Text(entry.text).font(Theme.line()).foregroundStyle(Theme.ink)
-            }
+            EntryLine(text: entry.text, mood: entry.mood)
         } else {
             Text("Days older than a week can't be added.")
                 .font(Theme.caption).foregroundStyle(Theme.quiet)

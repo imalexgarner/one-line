@@ -24,16 +24,9 @@ struct TimelineView: View {
                 ForEach(groups) { group in
                     Section {
                         ForEach(group.entries) { e in
-                            HStack(alignment: .top, spacing: 14) {
-                                Circle().fill(e.mood.color).frame(width: 10, height: 10).padding(.top, 8)
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(e.day.formatted(.dateTime.weekday(.abbreviated).day()))
-                                        .font(Theme.caption).foregroundStyle(Theme.quiet)
-                                    Text(e.text).font(Theme.line(19)).foregroundStyle(Theme.ink)
-                                }
-                            }
-                            .listRowBackground(Theme.paper)
-                            .listRowInsets(EdgeInsets(top: 10, leading: Theme.margin, bottom: 10, trailing: Theme.margin))
+                            TimelineRow(day: e.day, text: e.text, mood: e.mood)
+                                .listRowBackground(Theme.paper)
+                                .listRowInsets(EdgeInsets(top: 10, leading: Theme.margin, bottom: 10, trailing: Theme.margin))
                         }
                         .onDelete { offsets in offsets.map { group.entries[$0] }.forEach(context.delete) }
                     } header: {
@@ -47,7 +40,7 @@ struct TimelineView: View {
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
-            .overlay { if entries.isEmpty { Text("Nothing kept yet.").font(Theme.caption).foregroundStyle(Theme.quiet) } }
+            .overlay { if entries.isEmpty { EmptyState("Nothing kept yet.") } }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background { Theme.paper.ignoresSafeArea() }
