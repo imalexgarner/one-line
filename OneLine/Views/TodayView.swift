@@ -29,12 +29,14 @@ struct TodayView: View {
                         }
                         .buttonStyle(PressableButtonStyle(scale: 0.98))
                         .accessibilityHint("Double tap to edit")
-                        .transition(.opacity.combined(with: .move(edge: .bottom)))
+                        // Instant swap: a cross-fade would overlay the two copies of the text (ghosting).
+                        .transition(.identity)
                     } else {
                         EntryEditor(text: todays?.text ?? "", mood: $mood, saveRequest: saveRequest,
                                     barNamespace: barSpace) { text, mood in
                             save(text, mood)
                         }
+                        .transition(.identity)
                     }
                     if let memory, !isEditing {
                         MemoryCard(label: memory.label, text: memory.entry.text, mood: memory.entry.mood)
