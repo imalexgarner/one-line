@@ -8,7 +8,14 @@ struct JournalView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Entry.day, order: .reverse) private var entries: [Entry]
 
-    @State private var rows = 2
+    @State private var rows: Int = {
+        #if DEBUG
+        // `-debugRows 5` opens with the calendar expanded.
+        let debug = UserDefaults.standard.integer(forKey: "debugRows")
+        if debug > 0 { return debug }
+        #endif
+        return 2
+    }()
     @State private var drag: CGFloat = 0
     @State private var focus: Date?
     @State private var selected: DayID?
@@ -19,14 +26,12 @@ struct JournalView: View {
     private let radius: CGFloat = 24
 
     private var today: Date { Calendar.current.startOfDay(for: .now) }
-    private var weekStarts: [Date] {
-        WeekLayout.weekStarts(from: entries.last?.day ?? today, through: today)
+    private var months: [Date] {
+        MonthLayout.months(from: entries.last?.day ?? today, through: today)
     }
 
-    /// Row counts the seam snaps to, never more than there are weeks.
-    private var detents: [Int] {
-        Set([1, 2, 5].map { min($0, max(weekStarts.count, 1)) }).sorted()
-    }
+    /// Row counts the seam snaps to: a week, two weeks, a month.
+    private let detents = [1, 2, 5]
 
     private var minHeight: CGFloat { CalendarCard.height(forRows: detents.first ?? 1) }
     private var maxHeight: CGFloat { CalendarCard.height(forRows: detents.last ?? 1) }
@@ -55,7 +60,7 @@ struct JournalView: View {
         let marks = DayMark.marks(from: entries)
         GeometryReader { geo in
         VStack(spacing: 0) {
-            CalendarCard(weekStarts: weekStarts, marks: marks, today: today, focus: focus,
+            CalendarCard(months: months, marks: marks, today: today, focus: focus,
                          topInset: geo.safeAreaInsets.top, onSelect: select)
                 .frame(height: calendarHeight + geo.safeAreaInsets.top)
                 .background(Theme.paper)
