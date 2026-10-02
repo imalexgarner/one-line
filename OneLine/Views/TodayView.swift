@@ -46,8 +46,7 @@ struct TodayView: View {
                 .padding(.bottom, 24)
             }
         }
-        .navigationTitle(headline)
-        .navigationBarTitleDisplayMode(.large)
+        .toolbar(.hidden, for: .navigationBar)   // no title on Today
         .softTopEdge()
         .scrollDismissesKeyboard(.interactively)
         .trackKeyboard($keyboardUp)
@@ -63,11 +62,6 @@ struct TodayView: View {
             }
         }
         .background { Theme.paper.ignoresSafeArea() }
-    }
-
-    private var headline: String {
-        if todays == nil { return "What's one thing from today?" }
-        return isEditing ? "Change your line" : "Kept"
     }
 
     private func save(_ text: String, _ mood: Mood) {
