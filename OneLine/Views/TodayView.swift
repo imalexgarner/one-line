@@ -39,6 +39,7 @@ struct TodayView: View {
                     }
                     if let memory, !isEditing {
                         MemoryCard(label: memory.label, text: memory.entry.text, mood: memory.entry.mood)
+                            .transition(.opacity.combined(with: .scale(scale: 0.97)))
                     }
                 }
                 .padding(.horizontal, Theme.margin)
