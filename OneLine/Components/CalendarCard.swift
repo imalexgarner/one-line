@@ -19,7 +19,7 @@ struct CalendarCard: View {
     let onSelect: (Date) -> Void
 
     private static let topPadding: CGFloat = 10
-    private static let bottomPadding: CGFloat = 6   // less than the gap between rows, so no sliver of the next one shows
+    private static let bottomPadding: CGFloat = 9   // clears the 4.5pt ring of a circle, but stays under gap - 4.5 so no sliver of the next row shows
 
     /// The card's height, below any top inset, when it shows `rows` whole rows under the heading.
     static func height(forRows rows: Int) -> CGFloat {
@@ -31,10 +31,11 @@ struct CalendarCard: View {
     private var focusOffset: CGFloat? { focus.flatMap { layout.offset(for: $0) } }
 
     var body: some View {
-        VStack(spacing: 0) {
-            Color.clear.frame(height: topInset + Self.topPadding)
-            grid
-        }
+        // The scroll view is laid out as an overlay on a plain frame, so it hangs from the top of the card at
+        // whatever size it wants instead of being centred and pushed up when the card is short.
+        Color.clear
+            .overlay(alignment: .top) { grid.padding(.top, topInset + Self.topPadding) }
+            .clipped()
     }
 
     private var grid: some View {
@@ -67,6 +68,7 @@ struct CalendarCard: View {
         .contentMargins(.bottom, max(0, maxHeight - Self.topPadding - CalendarLayout.headingHeight - CalendarLayout.gap - CalendarLayout.rowHeight),
                         for: .scrollContent)
         .scrollIndicators(.hidden)
+        .hardTopEdge()
         .onChange(of: focusOffset) { _, y in
             guard let y else { return }
             withAnimation(.snappy) { position.scrollTo(y: y) }
