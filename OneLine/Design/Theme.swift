@@ -33,7 +33,7 @@ enum Theme {
     static let entrySmall = Font.system(.title3, design: .serif)
     /// Row text in Settings: upright sans, not serif.
     static let body = Font.system(.body)
-    static let button = Font.system(.body, design: .serif).weight(.semibold)
+    static let button = Font.system(.body).weight(.semibold)
     /// Day numbers in the calendar.
     static let number = Font.system(.callout, design: .serif)
     /// Supporting text: eyebrows, dates, weekday headings, hints.
