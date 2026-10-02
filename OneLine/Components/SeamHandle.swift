@@ -20,7 +20,7 @@ struct SeamHandle: View {
             .overlay {
                 Color.clear.frame(height: 44).contentShape(Rectangle())   // generous hit area
                     .gesture(
-                        DragGesture()
+                        DragGesture(minimumDistance: 0, coordinateSpace: .global)   // the handle moves as you drag, so measure outside it
                             .onChanged { onDrag($0.translation.height) }
                             .onEnded { onEnd($0.translation.height, $0.predictedEndTranslation.height) }
                     )

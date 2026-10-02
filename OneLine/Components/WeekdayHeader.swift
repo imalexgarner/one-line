@@ -5,7 +5,7 @@ import SwiftUI
 ///     WeekdayHeader()
 struct WeekdayHeader: View {
     /// Height of the row of letters.
-    static let height: CGFloat = 20
+    static let height = CalendarLayout.weekdayRowHeight
 
     var body: some View {
         HStack(spacing: 0) {

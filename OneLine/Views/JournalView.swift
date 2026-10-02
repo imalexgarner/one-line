@@ -8,78 +8,50 @@ struct JournalView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Entry.day, order: .reverse) private var entries: [Entry]
 
-    @State private var rows: Int = {
+    /// Rows of the calendar the seam snaps to: a week, two weeks, a month.
+    private let detentRows = [1, 2, 5]
+    private let detentNames = ["1 week", "2 weeks", "Month"]
+
+    @State private var detent: Int = {
         #if DEBUG
         // `-debugRows 5` opens with the calendar expanded.
-        let debug = UserDefaults.standard.integer(forKey: "debugRows")
-        if debug > 0 { return debug }
+        let rows = UserDefaults.standard.integer(forKey: "debugRows")
+        if let i = [1, 2, 5].firstIndex(of: rows) { return i }
         #endif
-        return 2
+        return 1
     }()
-    @State private var drag: CGFloat = 0
     @State private var focus: Date?
     @State private var selected: DayID?
 
     private struct DayID: Identifiable { let date: Date; var id: Date { date } }
 
-    private let seam: CGFloat = 12
-    private let radius: CGFloat = 24
-
     private var today: Date { Calendar.current.startOfDay(for: .now) }
-    private var months: [Date] {
-        MonthLayout.months(from: entries.last?.day ?? today, through: today)
-    }
-
-    /// Row counts the seam snaps to: a week, two weeks, a month.
-    private let detents = [1, 2, 5]
-
-    private var minHeight: CGFloat { CalendarCard.height(forRows: detents.first ?? 1) }
-    private var maxHeight: CGFloat { CalendarCard.height(forRows: detents.last ?? 1) }
-
-    /// Follows the finger, with resistance past the smallest and largest detents.
-    private var calendarHeight: CGFloat {
-        let proposed = CalendarCard.height(forRows: rows) + drag
-        func resist(_ overshoot: CGFloat) -> CGFloat { min(overshoot * 0.3, 28) }
-        if proposed < minHeight { return minHeight - resist(minHeight - proposed) }
-        if proposed > maxHeight { return maxHeight + resist(proposed - maxHeight) }
-        return proposed
-    }
-
-    private func nearestDetent(to height: CGFloat) -> Int {
-        detents.min { abs(CalendarCard.height(forRows: $0) - height) < abs(CalendarCard.height(forRows: $1) - height) } ?? rows
-    }
-
-    private var topShape: UnevenRoundedRectangle {
-        UnevenRoundedRectangle(cornerRadii: .init(bottomLeading: radius, bottomTrailing: radius), style: .continuous)
-    }
-    private var bottomShape: UnevenRoundedRectangle {
-        UnevenRoundedRectangle(cornerRadii: .init(topLeading: radius, topTrailing: radius), style: .continuous)
-    }
 
     var body: some View {
         let marks = DayMark.marks(from: entries)
-        GeometryReader { geo in
-        VStack(spacing: 0) {
-            CalendarCard(months: months, marks: marks, today: today, focus: focus,
-                         topInset: geo.safeAreaInsets.top, onSelect: select)
-                .frame(height: calendarHeight + geo.safeAreaInsets.top)
-                .background(Theme.paper)
-                .clipShape(topShape)
-            SeamHandle(label: "Resize calendar", value: "\(rows) \(rows == 1 ? "row" : "rows")", height: seam,
-                       onDrag: { drag = $0 }, onEnd: snap, onStep: step)
-            JournalList(entries: entries, position: $focus, bottomInset: geo.safeAreaInsets.bottom, onDelete: context.delete)
-                .background(Theme.paper)
-                .clipShape(bottomShape)
+        let layout = CalendarLayout(months: MonthLayout.months(from: entries.last?.day ?? today, through: today), today: today)
+        SplitStack(detents: detentRows.map(CalendarCard.height(forRows:)), index: $detent,
+                   label: "Resize calendar", values: detentNames) { inset in
+            CalendarCard(layout: layout, marks: marks, today: today, focus: focus, topInset: inset, onSelect: select)
+        } bottom: { inset in
+            JournalList(entries: entries, position: $focus, bottomInset: inset, onDelete: context.delete)
                 .overlay { if entries.isEmpty { EmptyState("Nothing kept yet", message: "Your lines will gather here, week by week.") } }
         }
-        .ignoresSafeArea(edges: [.top, .bottom])
-        .sensoryFeedback(.selection, trigger: nearestDetent(to: calendarHeight))
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background { Color.black.ignoresSafeArea() }
         .toolbar(.hidden, for: .navigationBar)
         .sheet(item: $selected) { DaySheet(day: $0.date) }
-        .onAppear { if focus == nil { focus = entries.first?.day } }
+        .onAppear {
+            guard focus == nil else { return }
+            #if DEBUG
+            // `-debugFocusDaysAgo 20` opens with the list and calendar on the line from that many days back.
+            let ago = UserDefaults.standard.integer(forKey: "debugFocusDaysAgo")
+            if ago > 0, let target = Calendar.current.date(byAdding: .day, value: -ago, to: today),
+               let entry = entries.first(where: { $0.day <= target }) {
+                focus = entry.day
+                return
+            }
+            #endif
+            focus = entries.first?.day
+        }
     }
 
     private func select(_ day: Date) {
@@ -89,19 +61,6 @@ struct JournalView: View {
         } else {
             selected = DayID(date: day)
         }
-    }
-
-    /// Settle on the detent the card was heading for: where it would have coasted to, not just where the finger let go.
-    private func snap(_ translation: CGFloat, _ predicted: CGFloat) {
-        let target = CalendarCard.height(forRows: rows) + translation + (predicted - translation) * 0.5
-        let nearest = nearestDetent(to: min(max(target, minHeight), maxHeight))
-        withAnimation(.spring(response: 0.38, dampingFraction: 0.78)) { rows = nearest; drag = 0 }
-    }
-
-    private func step(_ direction: AccessibilityAdjustmentDirection) {
-        let i = detents.firstIndex(of: rows) ?? 0
-        let next = direction == .increment ? min(i + 1, detents.count - 1) : max(i - 1, 0)
-        withAnimation(.spring(response: 0.38, dampingFraction: 0.78)) { rows = detents[next] }
     }
 }
 
