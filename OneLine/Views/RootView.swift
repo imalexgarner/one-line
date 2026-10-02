@@ -4,7 +4,7 @@ struct RootView: View {
     @Environment(\.modelContext) private var context
     @AppStorage("hasOnboarded") private var hasOnboarded = false
 
-    enum Page: Int { case today, year, timeline, settings }
+    enum Page: Int { case today, journal, settings }
 
     @State private var selection: Page = {
         #if DEBUG
@@ -18,8 +18,7 @@ struct RootView: View {
     private var tabs: some View {
         TabView(selection: $selection) {
             Tab("", systemImage: "plus.app", value: Page.today) { NavigationStack { TodayView() } }
-            Tab("", systemImage: "calendar", value: Page.year) { NavigationStack { YearView() } }
-            Tab("", systemImage: "calendar.day.timeline.left", value: Page.timeline) { NavigationStack { TimelineView() } }
+            Tab("", systemImage: "calendar", value: Page.journal) { NavigationStack { JournalView() } }
             Tab("", systemImage: "switch.2", value: Page.settings) { NavigationStack { SettingsView() } }
         }
         .tint(Theme.ink)
