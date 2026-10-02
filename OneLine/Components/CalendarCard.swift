@@ -13,15 +13,29 @@ struct CalendarCard: View {
     var topInset: CGFloat = 0
     let onSelect: (Date) -> Void
 
-    /// One row: a 34pt circle plus its gap. The card's detents are multiples of this.
+    /// One row: a 34pt circle plus its gap.
     static let rowPitch: CGFloat = 42
-    static let verticalPadding: CGFloat = 14
+    private static let headerTop: CGFloat = 10
+    private static let gapBelowHeader: CGFloat = 6
+    private static let bottomPadding: CGFloat = 14
+
+    /// The card's height, below any top inset, when it shows `rows` weeks: weekday header, the rows, padding.
+    static func height(forRows rows: Int) -> CGFloat {
+        headerTop + WeekdayHeader.height + gapBelowHeader + CGFloat(rows) * rowPitch - 8 + bottomPadding
+    }
 
     @State private var topWeek: Date?
 
     private var focusWeek: Date? { focus.map { WeekLayout.weekStart(of: $0) } }
 
     var body: some View {
+        VStack(spacing: 0) {
+            WeekdayHeader().padding(.top, topInset + Self.headerTop)
+            weeks
+        }
+    }
+
+    private var weeks: some View {
         ScrollView {
             LazyVStack(spacing: 8) {
                 ForEach(weekStarts, id: \.self) { week in
@@ -36,8 +50,8 @@ struct CalendarCard: View {
             .scrollTargetLayout()
             .padding(.horizontal, Theme.margin - 6)
         }
-        .contentMargins(.top, topInset + Self.verticalPadding, for: .scrollContent)
-        .contentMargins(.bottom, Self.verticalPadding, for: .scrollContent)
+        .contentMargins(.top, Self.gapBelowHeader, for: .scrollContent)
+        .contentMargins(.bottom, Self.bottomPadding, for: .scrollContent)
         .scrollPosition(id: $topWeek, anchor: .top)
         .scrollIndicators(.hidden)
         .onChange(of: focusWeek) { _, week in
@@ -58,6 +72,6 @@ struct CalendarCard: View {
         marks[cal.date(byAdding: .day, value: -d, to: today)!] = DayMark(mood: Mood.allCases[d % Mood.allCases.count], text: "x")
     }
     return CalendarCard(weekStarts: weeks, marks: marks, today: today, focus: today) { _ in }
-        .frame(height: 112).background(Theme.paper)
+        .frame(height: CalendarCard.height(forRows: 2)).background(Theme.paper)
 }
 #endif

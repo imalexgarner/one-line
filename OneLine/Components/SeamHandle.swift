@@ -1,16 +1,16 @@
 import SwiftUI
 
 /// The black bar between the two cards, with a grabber. Dragging reports a live offset; letting go
-/// reports where the drag ended so the caller can snap to a detent. Also adjustable for VoiceOver.
+/// reports where it ended, and where the flick would have carried it, so the caller can snap. Also adjustable for VoiceOver.
 ///
 ///     SeamHandle(label: "Resize calendar", value: "2 rows", onDrag: { drag = $0 },
-///                onEnd: { snap(to: $0) }, onStep: { step($0) })
+///                onEnd: { snap($0, $1) }, onStep: { step($0) })
 struct SeamHandle: View {
     let label: String
     let value: String
     var height: CGFloat = 12
     let onDrag: (CGFloat) -> Void
-    let onEnd: (CGFloat) -> Void
+    let onEnd: (_ translation: CGFloat, _ predicted: CGFloat) -> Void
     let onStep: (AccessibilityAdjustmentDirection) -> Void
 
     var body: some View {
@@ -22,7 +22,7 @@ struct SeamHandle: View {
                     .gesture(
                         DragGesture()
                             .onChanged { onDrag($0.translation.height) }
-                            .onEnded { onEnd($0.translation.height) }
+                            .onEnded { onEnd($0.translation.height, $0.predictedEndTranslation.height) }
                     )
             }
             .accessibilityElement()
@@ -34,6 +34,6 @@ struct SeamHandle: View {
 
 #if DEBUG
 #Preview {
-    SeamHandle(label: "Resize", value: "2 rows", onDrag: { _ in }, onEnd: { _ in }, onStep: { _ in })
+    SeamHandle(label: "Resize", value: "2 rows", onDrag: { _ in }, onEnd: { _, _ in }, onStep: { _ in })
 }
 #endif

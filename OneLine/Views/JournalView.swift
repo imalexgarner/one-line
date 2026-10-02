@@ -28,13 +28,20 @@ struct JournalView: View {
         Set([1, 2, 5].map { min($0, max(weekStarts.count, 1)) }).sorted()
     }
 
-    private func height(forRows r: Int) -> CGFloat {
-        CGFloat(r) * CalendarCard.rowPitch - 8 + 2 * CalendarCard.verticalPadding
+    private var minHeight: CGFloat { CalendarCard.height(forRows: detents.first ?? 1) }
+    private var maxHeight: CGFloat { CalendarCard.height(forRows: detents.last ?? 1) }
+
+    /// Follows the finger, with resistance past the smallest and largest detents.
+    private var calendarHeight: CGFloat {
+        let proposed = CalendarCard.height(forRows: rows) + drag
+        func resist(_ overshoot: CGFloat) -> CGFloat { min(overshoot * 0.3, 28) }
+        if proposed < minHeight { return minHeight - resist(minHeight - proposed) }
+        if proposed > maxHeight { return maxHeight + resist(proposed - maxHeight) }
+        return proposed
     }
 
-    private var calendarHeight: CGFloat {
-        let lo = height(forRows: detents.first ?? 1), hi = height(forRows: detents.last ?? 1)
-        return min(max(height(forRows: rows) + drag, lo), hi)
+    private func nearestDetent(to height: CGFloat) -> Int {
+        detents.min { abs(CalendarCard.height(forRows: $0) - height) < abs(CalendarCard.height(forRows: $1) - height) } ?? rows
     }
 
     private var topShape: UnevenRoundedRectangle {
@@ -55,12 +62,13 @@ struct JournalView: View {
                 .clipShape(topShape)
             SeamHandle(label: "Resize calendar", value: "\(rows) \(rows == 1 ? "row" : "rows")", height: seam,
                        onDrag: { drag = $0 }, onEnd: snap, onStep: step)
-            JournalList(entries: entries, position: $focus, onDelete: context.delete)
-                .background { bottomShape.fill(Theme.paper).ignoresSafeArea(edges: .bottom) }
+            JournalList(entries: entries, position: $focus, bottomInset: geo.safeAreaInsets.bottom, onDelete: context.delete)
+                .background(Theme.paper)
                 .clipShape(bottomShape)
                 .overlay { if entries.isEmpty { EmptyState("Nothing kept yet", message: "Your lines will gather here, week by week.") } }
         }
-        .ignoresSafeArea(edges: .top)
+        .ignoresSafeArea(edges: [.top, .bottom])
+        .sensoryFeedback(.selection, trigger: nearestDetent(to: calendarHeight))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background { Color.black.ignoresSafeArea() }
@@ -78,16 +86,17 @@ struct JournalView: View {
         }
     }
 
-    private func snap(_ translation: CGFloat) {
-        let proposed = calendarHeight
-        let nearest = detents.min { abs(height(forRows: $0) - proposed) < abs(height(forRows: $1) - proposed) } ?? rows
-        withAnimation(.snappy) { rows = nearest; drag = 0 }
+    /// Settle on the detent the card was heading for: where it would have coasted to, not just where the finger let go.
+    private func snap(_ translation: CGFloat, _ predicted: CGFloat) {
+        let target = CalendarCard.height(forRows: rows) + translation + (predicted - translation) * 0.5
+        let nearest = nearestDetent(to: min(max(target, minHeight), maxHeight))
+        withAnimation(.spring(response: 0.38, dampingFraction: 0.78)) { rows = nearest; drag = 0 }
     }
 
     private func step(_ direction: AccessibilityAdjustmentDirection) {
         let i = detents.firstIndex(of: rows) ?? 0
         let next = direction == .increment ? min(i + 1, detents.count - 1) : max(i - 1, 0)
-        withAnimation(.snappy) { rows = detents[next] }
+        withAnimation(.spring(response: 0.38, dampingFraction: 0.78)) { rows = detents[next] }
     }
 }
 

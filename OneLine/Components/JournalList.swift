@@ -7,6 +7,8 @@ import SwiftUI
 struct JournalList: View {
     let entries: [Entry]
     @Binding var position: Date?
+    /// Room at the foot for a tab bar the list scrolls under.
+    var bottomInset: CGFloat = 0
     var onDelete: (Entry) -> Void = { _ in }
 
     private struct MonthGroup: Identifiable {
@@ -41,8 +43,8 @@ struct JournalList: View {
             }
             .scrollTargetLayout()
             .padding(.horizontal, Theme.margin)
-            .padding(.bottom, 24)
         }
+        .contentMargins(.bottom, bottomInset + 24, for: .scrollContent)
         .scrollPosition(id: $position, anchor: .top)
         .scrollContentBackground(.hidden)
     }
