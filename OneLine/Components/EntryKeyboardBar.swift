@@ -35,12 +35,13 @@ struct EntryKeyboardBar: View {
             .sensoryFeedback(.selection, trigger: mood)
             .accessibilityLabel("Mood, \(mood.name)")
             Spacer(minLength: 0)
-            Button(action: onSave) {
-                Text(title).font(.system(.body).weight(.semibold)).padding(.horizontal, 8).padding(.vertical, 4)
+            Button { if canSave { onSave() } } label: {
+                Text(title).font(.system(.body).weight(.semibold)).foregroundStyle(Theme.paper)
+                    .padding(.horizontal, 16).padding(.vertical, 8)
+                    .background(Theme.ink.opacity(canSave ? 1 : 0.3), in: Capsule())
             }
-            .buttonStyle(.borderedProminent).tint(Theme.ink)
-            .foregroundStyle(Theme.paper)
-            .disabled(!canSave)
+            .buttonStyle(.plain)   // not .disabled: that dims the whole label on top of the opacity below
+            .animation(.smooth, value: canSave)
         }
         .padding(8)
         .glassBackground()
