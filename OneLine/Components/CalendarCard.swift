@@ -13,6 +13,9 @@ struct CalendarCard: View {
     var focus: Date?
     /// Extra room above the heading, for a card that extends under the status bar.
     var topInset: CGFloat = 0
+    /// The tallest the card ever gets, below the inset. Sets the room left under the last month so
+    /// its rows can lead the card too; a fixed number, so it can't feed back into the scroll view.
+    var maxHeight: CGFloat = 0
     let onSelect: (Date) -> Void
 
     private static let topPadding: CGFloat = 10
@@ -24,7 +27,6 @@ struct CalendarCard: View {
     }
 
     @State private var position = ScrollPosition(edge: .top)
-    @State private var viewport: CGFloat = 0
 
     private var focusOffset: CGFloat? { focus.flatMap { layout.offset(for: $0) } }
 
@@ -40,7 +42,7 @@ struct CalendarCard: View {
             LazyVStack(spacing: CalendarLayout.gap, pinnedViews: .sectionHeaders) {
                 ForEach(layout.months) { month in
                     Section {
-                        ForEach(Array(month.rows.enumerated()), id: \.offset) { _, row in
+                        ForEach(month.rows, id: \.rowID) { row in
                             HStack(spacing: 0) {
                                 ForEach(Array(row.enumerated()), id: \.offset) { _, day in
                                     if let day {
@@ -62,9 +64,8 @@ struct CalendarCard: View {
         .scrollPosition($position)
         .scrollTargetBehavior(RowSnap(layout: layout))
         // Room below the last row so the oldest rows can lead the card too.
-        .contentMargins(.bottom, max(0, viewport - CalendarLayout.headingHeight - CalendarLayout.gap - CalendarLayout.rowHeight),
+        .contentMargins(.bottom, max(0, maxHeight - Self.topPadding - CalendarLayout.headingHeight - CalendarLayout.gap - CalendarLayout.rowHeight),
                         for: .scrollContent)
-        .onScrollGeometryChange(for: CGFloat.self) { $0.containerSize.height } action: { _, height in viewport = height }
         .scrollIndicators(.hidden)
         .onChange(of: focusOffset) { _, y in
             guard let y else { return }

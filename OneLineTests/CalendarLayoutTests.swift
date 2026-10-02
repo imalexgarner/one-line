@@ -30,8 +30,8 @@ final class CalendarLayoutTests: XCTestCase {
 
     func testTheNextMonthStartsAfterAHeadingAndGaps() {
         let l = layout()
-        // May: 3 rows -> heading 46 + gap 8 + 3 * 42 = 180
-        XCTAssertEqual(l.offsets[date(2026, 4, 1)], 180)      // April's first row: Wed 1 Apr, week of 30 Mar
+        // May: 3 rows -> heading 34 + gap 8 + 3 * 42 = 168
+        XCTAssertEqual(l.offsets[date(2026, 4, 1)], 168)      // April's first row: Wed 1 Apr, week of 30 Mar
         XCTAssertEqual(l.snapOffsets, l.snapOffsets.sorted())
         XCTAssertEqual(l.snapOffsets.count, 8)
     }
@@ -47,5 +47,9 @@ final class CalendarLayoutTests: XCTestCase {
         XCTAssertEqual(l.nearestOffset(to: 50), 42)
         XCTAssertEqual(l.nearestOffset(to: 70), 84)
         XCTAssertEqual(l.nearestOffset(to: -30), 0)
+    }
+
+    func testAHeadingIsExactlyOneRowSlot() {
+        XCTAssertEqual(CalendarLayout.headingHeight + CalendarLayout.gap, CalendarLayout.rowPitch)
     }
 }

@@ -2,23 +2,26 @@ import SwiftUI
 import SwiftData
 
 /// The journal in one screen: a calendar card over the list of kept lines, split by a black seam you
-/// can drag to show one week, two weeks or the whole month. Tapping a kept day scrolls the list to its
+/// can drag to show one row of the calendar, five, or all of it. Tapping a kept day scrolls the list to its
 /// line; scrolling the list moves the calendar to match. A blank past day opens its sheet to write.
 struct JournalView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Entry.day, order: .reverse) private var entries: [Entry]
 
-    /// Rows of the calendar the seam snaps to: a week, two weeks, a month.
-    private let detentRows = [1, 2, 5]
-    private let detentNames = ["1 week", "2 weeks", "Month"]
+    /// One row, five rows, then the calendar fills the screen and the list peeks out below.
+    private let detents: [SplitDetent] = [
+        .height(CalendarCard.height(forRows: 1)),
+        .height(CalendarCard.height(forRows: 5)),
+        .remaining(leaving: 200, base: CalendarCard.height(forRows: 0), step: CalendarLayout.rowPitch),
+    ]
+    private let detentNames = ["1 row", "5 rows", "Extended"]
 
     @State private var detent: Int = {
         #if DEBUG
-        // `-debugRows 5` opens with the calendar expanded.
-        let rows = UserDefaults.standard.integer(forKey: "debugRows")
-        if let i = [1, 2, 5].firstIndex(of: rows) { return i }
+        let rows = UserDefaults.standard.integer(forKey: "debugRows")   // 1, 5, or 99 for extended
+        if let i = [1, 5, 99].firstIndex(of: rows) { return i }
         #endif
-        return 1
+        return 0
     }()
     @State private var focus: Date?
     @State private var selected: DayID?
@@ -30,9 +33,9 @@ struct JournalView: View {
     var body: some View {
         let marks = DayMark.marks(from: entries)
         let layout = CalendarLayout(months: MonthLayout.months(from: entries.last?.day ?? today, through: today), today: today)
-        SplitStack(detents: detentRows.map(CalendarCard.height(forRows:)), index: $detent,
-                   label: "Resize calendar", values: detentNames) { inset in
-            CalendarCard(layout: layout, marks: marks, today: today, focus: focus, topInset: inset, onSelect: select)
+        SplitStack(detents: detents, index: $detent, label: "Resize calendar", values: detentNames) { inset, _, maxHeight in
+            CalendarCard(layout: layout, marks: marks, today: today, focus: focus, topInset: inset,
+                         maxHeight: maxHeight, onSelect: select)
         } bottom: { inset in
             JournalList(entries: entries, position: $focus, bottomInset: inset, onDelete: context.delete)
                 .overlay { if entries.isEmpty { EmptyState("Nothing kept yet", message: "Your lines will gather here, week by week.") } }

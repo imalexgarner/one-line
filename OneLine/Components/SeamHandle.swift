@@ -13,22 +13,28 @@ struct SeamHandle: View {
     let onEnd: (_ translation: CGFloat, _ predicted: CGFloat) -> Void
     let onStep: (AccessibilityAdjustmentDirection) -> Void
 
+    /// The touch area is this tall, centred on the bar; the bar itself is `height`.
+    private let touchHeight: CGFloat = 44
+
     var body: some View {
-        Color.black
-            .frame(height: height)
-            .overlay { Capsule().fill(.white.opacity(0.35)).frame(width: 36, height: 4) }
-            .overlay {
-                Color.clear.frame(height: 44).contentShape(Rectangle())   // generous hit area
-                    .gesture(
-                        DragGesture(minimumDistance: 0, coordinateSpace: .global)   // the handle moves as you drag, so measure outside it
-                            .onChanged { onDrag($0.translation.height) }
-                            .onEnded { onEnd($0.translation.height, $0.predictedEndTranslation.height) }
-                    )
-            }
-            .accessibilityElement()
-            .accessibilityLabel(label)
-            .accessibilityValue(value)
-            .accessibilityAdjustableAction(onStep)
+        ZStack {
+            Color.black.frame(height: height)
+            Capsule().fill(.white.opacity(0.35)).frame(width: 36, height: 4)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: touchHeight)
+        .contentShape(Rectangle())
+        .gesture(
+            DragGesture(minimumDistance: 0, coordinateSpace: .global)   // the handle moves as you drag, so measure outside it
+                .onChanged { onDrag($0.translation.height) }
+                .onEnded { onEnd($0.translation.height, $0.predictedEndTranslation.height) }
+        )
+        .padding(.vertical, -(touchHeight - height) / 2)   // lay out as the bar, but keep the full touch area
+        .zIndex(1)                                          // above both cards, so they can't take the touch
+        .accessibilityElement()
+        .accessibilityLabel(label)
+        .accessibilityValue(value)
+        .accessibilityAdjustableAction(onStep)
     }
 }
 

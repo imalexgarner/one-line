@@ -33,3 +33,14 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: YES
         PRODUCT_BUNDLE_IDENTIFIER: com.alexgarner.oneline.tests
+  OneLineUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [OneLineUITests]
+    dependencies:
+      - target: OneLine
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.alexgarner.oneline.uitests
+        TEST_TARGET_NAME: OneLine

@@ -45,7 +45,7 @@ struct JournalList: View {
             .padding(.horizontal, Theme.margin)
         }
         .contentMargins(.bottom, bottomInset + 24, for: .scrollContent)
-        .scrollPosition(id: $position, anchor: .top)
+        .scrollPosition(id: $position, anchor: .topLeading)
         .scrollContentBackground(.hidden)
     }
 }

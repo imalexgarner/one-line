@@ -12,8 +12,10 @@ struct CalendarLayout {
     }
 
     // Metrics shared with the views that draw these rows.
-    static let monthLabelHeight: CGFloat = 26
-    static let weekdayRowHeight: CGFloat = 20
+    /// The heading (month name over weekday letters) plus the gap under it is exactly one row slot, so a heading
+    /// scrolling through the card is just another slot and no circle is ever cut off.
+    static let monthLabelHeight: CGFloat = 17
+    static let weekdayRowHeight: CGFloat = 17
     static let rowHeight: CGFloat = 34
     static let gap: CGFloat = 8
 
@@ -55,4 +57,9 @@ struct CalendarLayout {
     func nearestOffset(to y: CGFloat) -> CGFloat {
         snapOffsets.min { abs($0 - y) < abs($1 - y) } ?? y
     }
+}
+
+extension Array where Element == Date? {
+    /// A calendar row's identity: its first date. Unique across months, unlike its position in one.
+    var rowID: Date { compactMap { $0 }.first ?? .distantPast }
 }
