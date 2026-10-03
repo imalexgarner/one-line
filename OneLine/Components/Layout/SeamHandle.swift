@@ -19,7 +19,7 @@ struct SeamHandle: View {
     var body: some View {
         ZStack {
             Color.black.frame(height: height)
-            Capsule().fill(.white.opacity(0.35)).frame(width: 36, height: 4)
+            Capsule().fill(.white.opacity(0.35)).frame(width: 40, height: 4)
         }
         .frame(maxWidth: .infinity)
         .frame(height: touchHeight)

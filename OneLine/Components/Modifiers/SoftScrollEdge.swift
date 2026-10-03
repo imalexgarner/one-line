@@ -12,6 +12,17 @@ extension View {
 }
 
 extension View {
+    /// No fade where scrolling content slides under the top edge (iOS 26+; no-op before).
+    @ViewBuilder func hardTopEdge() -> some View {
+        if #available(iOS 26, *) {
+            self.scrollEdgeEffectHidden(true, for: .top)
+        } else {
+            self
+        }
+    }
+}
+
+extension View {
     /// Zero top and bottom list-row insets, keeping the system's side insets (iOS 26 overload; earlier
     /// systems get an explicit 20pt, the plain-list default).
     @ViewBuilder func listRowNoVerticalInsets() -> some View {

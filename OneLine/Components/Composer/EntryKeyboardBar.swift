@@ -25,22 +25,17 @@ struct EntryKeyboardBar: View {
                     }
                 }
             } label: {
-                HStack(spacing: 8) {
-                    Circle().fill(mood.color).frame(width: 20, height: 20)
-                    Text(mood.name).font(Theme.caption).foregroundStyle(Theme.ink)
-                    Image(systemName: "chevron.up.chevron.down").font(.caption2).foregroundStyle(Theme.quiet)
+                HStack(spacing: 12) {
+                    Circle().fill(mood.color).frame(width: 16, height: 16)
+                    Text(mood.name).font(Theme.body).foregroundStyle(Theme.ink)
+                    Image(systemName: "chevron.up.chevron.down").font(.caption).foregroundStyle(Theme.quiet)
                 }
                 .padding(.leading, 8)
             }
             .sensoryFeedback(.selection, trigger: mood)
             .accessibilityLabel("Mood, \(mood.name)")
             Spacer(minLength: 0)
-            Button(action: onSave) {
-                Text(title).font(.system(.body).weight(.semibold)).padding(.horizontal, 8).padding(.vertical, 4)
-            }
-            .buttonStyle(.borderedProminent).tint(Theme.ink)
-            .foregroundStyle(Theme.paper)
-            .disabled(!canSave)
+            SmallButton(title, isActive: canSave, action: onSave)
         }
         .padding(8)
         .glassBackground()
@@ -76,6 +71,6 @@ extension View {
 #if DEBUG
 #Preview {
     @Previewable @State var mood: Mood = .calm
-    EntryKeyboardBar(mood: $mood, canSave: true) {}.background(Theme.paper)
+    EntryKeyboardBar(mood: $mood, canSave: true) {}
 }
 #endif

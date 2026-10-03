@@ -2,7 +2,7 @@ import SwiftUI
 
 /// A quiet centred message for places with nothing to show yet.
 ///
-///     EmptyState("Nothing kept yet", message: "Your lines will gather here.")
+/// EmptyState("Nothing kept yet", message: "Your lines will gather here.")
 struct EmptyState: View {
     let title: String
     var message: String?
@@ -13,10 +13,10 @@ struct EmptyState: View {
     }
 
     var body: some View {
-        VStack(spacing: 8) {
-            Text(title).font(Theme.entrySmall).foregroundStyle(Theme.ink)
+        VStack(spacing: 12) {
+            Text(title).font(Theme.title).foregroundStyle(Theme.ink)
             if let message {
-                Text(message).font(Theme.caption).foregroundStyle(Theme.quiet)
+                Text(message).font(Theme.body).foregroundStyle(Theme.quiet)
             }
         }
         .multilineTextAlignment(.center)

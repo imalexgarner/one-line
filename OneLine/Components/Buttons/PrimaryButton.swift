@@ -14,20 +14,19 @@ struct PrimaryButton: View {
 
     var body: some View {
         Button(action: action) {
-            Text(title).font(Theme.button)
-                .frame(maxWidth: .infinity).padding(.vertical, 14)
+            Text(title).font(Theme.button).foregroundStyle(Theme.paper)
+                .frame(maxWidth: .infinity).padding(.vertical, 12)
         }
         .buttonStyle(.borderedProminent).tint(Theme.ink)
-        .foregroundStyle(Theme.paper)
     }
 }
 
 #if DEBUG
 #Preview {
-    VStack(spacing: 16) {
+    VStack(spacing: 8) {
         PrimaryButton("Keep it") {}
         PrimaryButton("Keep it") {}.disabled(true)
     }
-    .padding(28).background(Theme.paper)
+    .padding(Theme.margin)
 }
 #endif

@@ -22,12 +22,12 @@ struct DayCircle: View {
                     .foregroundStyle(mark?.mood.onColor ?? Theme.quiet.opacity(day > today ? 0.5 : 1))
             }
             .frame(width: size, height: size)
-            .overlay { if day == today { Circle().stroke(Theme.ink, lineWidth: 1.5).padding(-3) } }
-            .overlay { if isFocused && day != today { Circle().stroke(Theme.ink.opacity(0.35), lineWidth: 1.5).padding(-3) } }
+            .overlay { if day == today { Circle().stroke(Theme.ink, lineWidth: 2).padding(-4) } }
+            .overlay { if isFocused && day != today { Circle().stroke(Theme.ink.opacity(0.24), lineWidth: 2).padding(-4) } }
             .dynamicTypeSize(...DynamicTypeSize.large)   // it has to fit inside the circle
             .frame(maxWidth: .infinity)
         }
-        .buttonStyle(PressableButtonStyle(scale: 0.88))
+        .buttonStyle(PressableButtonStyle())
         .disabled(day > today)
         .accessibilityLabel(day.formatted(.dateTime.month(.wide).day()))
         .accessibilityValue(mark.map { "\($0.mood.name): \($0.text)" } ?? "No entry")

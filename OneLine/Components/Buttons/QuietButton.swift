@@ -14,15 +14,15 @@ struct QuietButton: View {
 
     var body: some View {
         Button(action: action) {
-            Text(title).font(Theme.caption).foregroundStyle(Theme.quiet)
-                .frame(maxWidth: .infinity).padding(.vertical, 10)
+            Text(title).font(Theme.button).foregroundStyle(Theme.quiet)
+                .frame(maxWidth: .infinity).padding(.vertical, 12)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderedProminent).tint(Theme.ink .opacity(0.0))
     }
 }
 
 #if DEBUG
 #Preview {
-    QuietButton("Not now") {}.padding(28).background(Theme.paper)
+    QuietButton("Not now") {}.padding(28)
 }
 #endif

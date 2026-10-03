@@ -17,7 +17,7 @@ struct CalendarLayout {
     static let monthLabelHeight: CGFloat = 17
     static let weekdayRowHeight: CGFloat = 17
     static let rowHeight: CGFloat = 34
-    static let gap: CGFloat = 8
+    static let gap: CGFloat = 24
 
     static let headingHeight = monthLabelHeight + weekdayRowHeight
     /// Distance from one row to the next.

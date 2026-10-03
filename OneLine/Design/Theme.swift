@@ -14,12 +14,12 @@ enum Theme {
             : UIColor(red: 0.13, green: 0.12, blue: 0.11, alpha: 1)
     }
     static let ink = Color(uiColor: inkUI)
-    static let quiet = ink.opacity(0.5)
+    static let quiet = ink.opacity(0.6)
 
     // MARK: Layout
 
     /// Horizontal page margin shared by every screen and sheet.
-    static let margin: CGFloat = 28
+    static let margin: CGFloat = 24
 
     // MARK: Type scale
     //
@@ -32,12 +32,12 @@ enum Theme {
     /// A line shown smaller: memory card, timeline row.
     static let entrySmall = Font.system(.title3, design: .serif)
     /// Row text in Settings: upright sans, not serif.
-    static let body = Font.system(.body)
+    static let body = Font.system(.body).weight(.medium)
     static let button = Font.system(.body).weight(.semibold)
     /// Day numbers in the calendar.
-    static let number = Font.system(.callout, design: .serif)
+    static let number = Font.system(.callout).weight(.medium)
     /// Supporting text: eyebrows, dates, weekday headings, hints.
-    static let caption = Font.system(.callout)
+    static let caption = Font.system(.caption)
     /// Small uppercase labels, e.g. "1 YEAR AGO TODAY".
     static let label = Font.system(.caption).weight(.semibold)
 }

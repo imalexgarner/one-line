@@ -9,15 +9,15 @@ struct TimelineRow: View {
     let mood: Mood
 
     var body: some View {
-        HStack(alignment: .top, spacing: 14) {
-            Circle().fill(mood.color).frame(width: 10, height: 10).padding(.top, 8)
-            VStack(alignment: .leading, spacing: 4) {
+        HStack(alignment: .top, spacing: 12) {
+            Circle().fill(mood.color).frame(width: 8, height: 8).padding(.top, 3)
+            VStack(alignment: .leading, spacing: 8) {
                 Text(day.formatted(.dateTime.weekday(.abbreviated).day()))
                     .font(Theme.caption).foregroundStyle(Theme.quiet)
                 Text(text).font(Theme.entrySmall).foregroundStyle(Theme.ink)
             }
         }
-        .padding(.vertical, 12)
+        .padding(.vertical, 16)
         .accessibilityElement(children: .combine)
     }
 }

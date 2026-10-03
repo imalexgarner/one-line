@@ -75,10 +75,4 @@ struct JournalView: View {
 #Preview("Empty") {
     NavigationStack { JournalView() }.modelContainer(PreviewData.container(.empty))
 }
-
-#Preview("Dark") {
-    NavigationStack { JournalView() }
-        .modelContainer(PreviewData.container(.full))
-        .preferredColorScheme(.dark)
-}
 #endif

@@ -11,7 +11,7 @@ struct CalendarCard: View {
     let marks: [Date: DayMark]
     let today: Date
     var focus: Date?
-    /// Extra room above the heading, for a card that extends under the status bar.
+    /// The status bar's height: the grid scrolls under it, but the heading stays below it.
     var topInset: CGFloat = 0
     /// The tallest the card ever gets, below the inset. Sets the room left under the last month so
     /// its rows can lead the card too; a fixed number, so it can't feed back into the scroll view.
@@ -19,7 +19,7 @@ struct CalendarCard: View {
     let onSelect: (Date) -> Void
 
     private static let topPadding: CGFloat = 10
-    private static let bottomPadding: CGFloat = 6   // less than the gap between rows, so no sliver of the next one shows
+    private static let bottomPadding: CGFloat = 24   // room under the last row; the row gap matches it, so nothing of the next row shows
 
     /// The card's height, below any top inset, when it shows `rows` whole rows under the heading.
     static func height(forRows rows: Int) -> CGFloat {
@@ -28,14 +28,12 @@ struct CalendarCard: View {
 
     @State private var position = ScrollPosition(edge: .top)
 
+    /// Room above the heading. Scroll offsets count from the top of this, so a row under the heading sits at `offset - inset`.
+    private var inset: CGFloat { topInset + Self.topPadding }
+
     private var focusOffset: CGFloat? { focus.flatMap { layout.offset(for: $0) } }
 
-    var body: some View {
-        VStack(spacing: 0) {
-            Color.clear.frame(height: topInset + Self.topPadding)
-            grid
-        }
-    }
+    var body: some View { grid }
 
     private var grid: some View {
         ScrollView {
@@ -59,19 +57,31 @@ struct CalendarCard: View {
                         heading(for: month.start)
                     }
                 }
+                // Room below the last row so the oldest rows can lead the card too.
+                Color.clear.frame(height: max(0, maxHeight - Self.topPadding - CalendarLayout.headingHeight - CalendarLayout.gap - CalendarLayout.rowHeight - CalendarLayout.gap))
+            }
+        }
+        // The grid runs under the status bar, fading out softly there, while the pinned heading
+        // sits just below it, so the month and weekday letters never leave the screen.
+        .contentMargins(.top, inset, for: .scrollContent)
+        // Fade the rows out as they pass under the status bar; the pinned heading sits below the fade.
+        .mask {
+            VStack(spacing: 0) {
+                LinearGradient(stops: [.init(color: .clear, location: 0), .init(color: .clear, location: 0.3), .init(color: .black, location: 1)],
+                               startPoint: .top, endPoint: .bottom)
+                    .frame(height: inset)
+                Color.black
             }
         }
         .scrollPosition($position)
-        .scrollTargetBehavior(RowSnap(layout: layout))
-        // Room below the last row so the oldest rows can lead the card too.
-        .contentMargins(.bottom, max(0, maxHeight - Self.topPadding - CalendarLayout.headingHeight - CalendarLayout.gap - CalendarLayout.rowHeight),
-                        for: .scrollContent)
+        .scrollTargetBehavior(RowSnap(layout: layout, inset: inset))
         .scrollIndicators(.hidden)
+        .hardTopEdge()
         .onChange(of: focusOffset) { _, y in
             guard let y else { return }
-            withAnimation(.snappy) { position.scrollTo(y: y) }
+            withAnimation(.snappy) { position.scrollTo(y: y - inset) }
         }
-        .onAppear { if let y = focusOffset { position.scrollTo(y: y) } }
+        .onAppear { if let y = focusOffset { position.scrollTo(y: y - inset) } }
     }
 
     private func heading(for month: Date) -> some View {
@@ -93,9 +103,10 @@ struct CalendarCard: View {
 /// Lets a scroll come to rest only where a row sits directly under the pinned heading.
 private struct RowSnap: ScrollTargetBehavior {
     let layout: CalendarLayout
+    let inset: CGFloat
 
     func updateTarget(_ target: inout ScrollTarget, context: TargetContext) {
-        target.rect.origin.y = layout.nearestOffset(to: target.rect.origin.y)
+        target.rect.origin.y = layout.nearestOffset(to: target.rect.origin.y + inset) - inset
     }
 }
 

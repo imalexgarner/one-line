@@ -19,7 +19,7 @@ struct TodayView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                VStack(alignment: .leading, spacing: 36) {
+                VStack(alignment: .leading, spacing: 40) {
                     HeroIllustration("nc-improve-signup-experience", height: keyboardUp ? 96 : 200,
                                      alignment: keyboardUp ? .leading : .center)
                     if let todays, !isEditing {
@@ -43,7 +43,7 @@ struct TodayView: View {
                     }
                 }
                 .padding(.horizontal, Theme.margin)
-                .padding(.top, 8)
+                .padding(.top, 40)
                 .padding(.bottom, 24)
             }
         }

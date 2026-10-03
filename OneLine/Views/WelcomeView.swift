@@ -29,6 +29,7 @@ struct WelcomeView: View {
                         DatePicker("Reminder time", selection: $time, displayedComponents: .hourAndMinute)
                             .datePickerStyle(.wheel).labelsHidden()
                             .frame(maxWidth: .infinity)
+                    } actions: {
                         PrimaryButton("Remind me") { Task { await enableReminder() } }
                         QuietButton("Not now") { onFinish() }
                     }
@@ -56,9 +57,5 @@ struct WelcomeView: View {
 #if DEBUG
 #Preview {
     WelcomeView {}
-}
-
-#Preview("Dark") {
-    WelcomeView {}.preferredColorScheme(.dark)
 }
 #endif
